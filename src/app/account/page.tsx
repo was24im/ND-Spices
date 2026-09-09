@@ -198,10 +198,8 @@ export default function AccountPage() {
               <h1 className="font-serif text-xl sm:text-2xl font-bold">
                 {session?.user?.name || "Spice Guild Member"}
               </h1>
-              <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                role === "ADMIN" ? "bg-turmeric-300 text-spice-dark" : "bg-white/20 text-white"
-              }`}>
-                {role === "ADMIN" ? "👑 Admin" : "🌿 Customer"}
+              <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white">
+                🌿 Member
               </span>
             </div>
             <p className="text-xs text-cream-200 mt-0.5">{session?.user?.email}</p>
@@ -209,14 +207,6 @@ export default function AccountPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {role === "ADMIN" && (
-            <Link
-              href="/admin"
-              className="rounded-xl bg-white text-spice-dark px-4 py-2 text-xs font-bold hover:bg-cream-200 shadow-sm transition-colors"
-            >
-              Admin Portal
-            </Link>
-          )}
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="flex items-center gap-1.5 rounded-xl bg-white/20 hover:bg-white/30 px-3.5 py-2 text-xs font-semibold backdrop-blur-md transition-colors"

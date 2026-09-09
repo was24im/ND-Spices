@@ -259,10 +259,8 @@ export function Navbar() {
                         {session.user.name || "Spice Member"}
                       </p>
                       <p className="text-[11px] text-muted-foreground truncate">{session.user.email}</p>
-                      <span className={`inline-block mt-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                        role === "ADMIN" ? "bg-turmeric-100 text-turmeric-800" : "bg-cardamom-100 text-cardamom-800"
-                      }`}>
-                        {role === "ADMIN" ? "👑 Admin" : "🌿 Customer"}
+                      <span className="rounded-full bg-cream-200 px-2 py-0.5 text-[10px] font-bold text-secondary-700">
+                        🌿 Member
                       </span>
                     </div>
 
@@ -293,17 +291,6 @@ export function Navbar() {
                         <Heart className="h-4 w-4 text-muted-foreground" />
                         <span>Saved Wishlist ({totalWishlistCount})</span>
                       </Link>
-
-                      {(role === "ADMIN" || role === "SUPER_ADMIN") && (
-                        <Link
-                          href="/admin"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium text-cinnamon hover:bg-cream-100 transition-colors"
-                        >
-                          <ShieldCheck className="h-4 w-4 text-cinnamon" />
-                          <span className="font-bold">Super Admin Panel</span>
-                        </Link>
-                      )}
                     </div>
 
                     <div className="border-t border-cream-200 pt-1">

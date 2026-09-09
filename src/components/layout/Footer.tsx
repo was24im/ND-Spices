@@ -160,9 +160,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/staff/login" className="hover:text-yellow-400 transition-colors flex items-center gap-1.5 text-emerald-400 font-semibold">
-                  <span>Staff Portal</span>
-                  <ExternalLink className="h-3 w-3" />
+                <Link href="/products" className="hover:text-yellow-400 transition-colors">
+                  Quality &amp; Sourcing Promise
                 </Link>
               </li>
             </ul>

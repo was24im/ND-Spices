@@ -4,7 +4,7 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Lock, Mail, ArrowRight, ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -16,7 +16,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(
-    urlError === "unauthorized" ? "You need administrator permissions to access that page." : null
+    urlError === "unauthorized" ? "Please sign in to access your account." : null
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,16 +44,6 @@ function LoginForm() {
     }
   };
 
-  const fillCredentials = (role: "admin" | "customer") => {
-    if (role === "admin") {
-      setEmail("admin@ndspices.com");
-      setPassword("Admin@1234");
-    } else {
-      setEmail("customer@ndspices.com");
-      setPassword("Customer@1234");
-    }
-  };
-
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-6">
@@ -66,34 +56,8 @@ function LoginForm() {
             Welcome Back
           </h1>
           <p className="text-xs sm:text-sm text-spice-muted">
-            Sign in to access your spice basket, orders, and exclusive harvest member perks.
+            Sign in to access your spice basket, orders, and exclusive member benefits.
           </p>
-        </div>
-
-        {/* 1-Click Demo Credentials Pill */}
-        <div className="rounded-2xl border border-cream-300 bg-cream-100 p-3.5 space-y-2 text-xs">
-          <div className="flex items-center gap-1.5 font-bold text-spice-dark">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span>Quick Test Credentials:</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => fillCredentials("customer")}
-              className="rounded-lg bg-white border border-cream-300 px-2.5 py-1.5 text-left font-medium text-spice-dark hover:border-primary hover:text-primary transition-colors text-[11px]"
-            >
-              👤 <strong>Customer:</strong><br />
-              <span className="text-spice-muted">customer@ndspices.com</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => fillCredentials("admin")}
-              className="rounded-lg bg-white border border-cream-300 px-2.5 py-1.5 text-left font-medium text-spice-dark hover:border-secondary hover:text-secondary transition-colors text-[11px]"
-            >
-              👑 <strong>Admin Portal:</strong><br />
-              <span className="text-spice-muted">admin@ndspices.com</span>
-            </button>
-          </div>
         </div>
 
         {/* Error notification */}
