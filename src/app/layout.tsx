@@ -41,6 +41,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { ToastContainer } from "@/components/ui/Toast";
 
 export default function RootLayout({
   children,
@@ -56,6 +57,7 @@ export default function RootLayout({
           <Footer />
           <CartDrawer />
           <MobileBottomNav />
+          <ToastContainer />
         </AuthProvider>
       </body>
     </html>

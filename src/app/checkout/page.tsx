@@ -22,6 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useToastStore } from "@/store/useToastStore";
 import { formatPrice } from "@/lib/utils";
 
 export default function CheckoutPage() {
@@ -123,16 +124,92 @@ export default function CheckoutPage() {
     setAppliedCoupon(null);
   };
 
+  const { addToast } = useToastStore();
+
   const handlePlaceOrder = async () => {
+    // Validate address
+    let shippingPayload: any = null;
+
+    if (selectedAddressId !== "new" && savedAddresses.length > 0) {
+      const selected = savedAddresses.find((a) => a.id === selectedAddressId);
+      if (selected) {
+        shippingPayload = {
+          fullName: selected.fullName,
+          email: addressForm.email || session?.user?.email || "customer@ndspices.com",
+          phone: selected.phone,
+          street: selected.street,
+          city: selected.city,
+          state: selected.state,
+          postalCode: selected.postalCode,
+          country: selected.country || "India",
+        };
+      }
+    }
+
+    if (!shippingPayload) {
+      if (
+        !addressForm.fullName ||
+        !addressForm.email ||
+        !addressForm.phone ||
+        !addressForm.street ||
+        !addressForm.city ||
+        !addressForm.postalCode
+      ) {
+        addToast("Please fill in all shipping address fields.", "warning");
+        setCurrentStep(1);
+        return;
+      }
+      shippingPayload = {
+        fullName: addressForm.fullName,
+        email: addressForm.email,
+        phone: addressForm.phone,
+        street: addressForm.street,
+        city: addressForm.city,
+        state: addressForm.state,
+        postalCode: addressForm.postalCode,
+        country: "India",
+      };
+    }
+
     setIsProcessing(true);
 
-    // Mock live order registration
-    setTimeout(() => {
-      const orderNum = `ND-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-      setOrderSuccess(orderNum);
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            productId: item.productId,
+            variantId: item.variantId,
+            name: item.name,
+            weight: item.weight,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.image,
+          })),
+          shippingAddress: shippingPayload,
+          paymentMethod,
+          deliverySpeed: deliveryOption,
+          couponCode: appliedCoupon?.code || null,
+          discountAmount: discountAmount || 0,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to process order.");
+      }
+
+      setOrderSuccess(data.orderNumber);
       clearCart();
+      addToast(`Order #${data.orderNumber} placed successfully!`, "success");
+    } catch (err: any) {
+      console.error("Order error:", err);
+      addToast(err.message || "Failed to place order. Please try again.", "error");
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
   if (orderSuccess) {
@@ -168,10 +245,16 @@ export default function CheckoutPage() {
           </p>
         </div>
 
-        <div className="pt-4 flex justify-center">
+        <div className="pt-4 flex flex-col sm:flex-row justify-center gap-3">
+          <Link
+            href={`/orders/${orderSuccess}`}
+            className="rounded-xl bg-cardamom px-6 py-3 text-xs font-bold text-white hover:bg-cardamom-600 shadow-spice-sm transition-all"
+          >
+            Track Order & Download Invoice
+          </Link>
           <Link
             href="/products"
-            className="rounded-xl bg-cinnamon px-6 py-3 text-xs font-bold text-white hover:bg-cinnamon-600 shadow-spice-sm"
+            className="rounded-xl border border-cinnamon text-cinnamon px-6 py-3 text-xs font-bold hover:bg-cinnamon/5 transition-all"
           >
             Continue Exploring Spices
           </Link>

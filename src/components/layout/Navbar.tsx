@@ -277,6 +277,15 @@ export function Navbar() {
                       </Link>
 
                       <Link
+                        href="/orders"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium text-charcoal hover:bg-cream-100 transition-colors"
+                      >
+                        <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+                        <span>Order History & Invoices</span>
+                      </Link>
+
+                      <Link
                         href="/wishlist"
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium text-charcoal hover:bg-cream-100 transition-colors"
