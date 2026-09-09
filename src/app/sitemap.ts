@@ -2,7 +2,12 @@ import { MetadataRoute } from "next";
 import { MOCK_PRODUCTS } from "@/lib/mockData";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXTAUTH_URL || "https://ndspices.com";
+  const baseUrl =
+    (process.env.NEXTAUTH_URL && process.env.NEXTAUTH_URL.trim() !== ""
+      ? process.env.NEXTAUTH_URL.trim()
+      : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL.trim()}`
+      : "https://ndspices.com");
 
   // Static marketing routes
   const staticRoutes: MetadataRoute.Sitemap = [
