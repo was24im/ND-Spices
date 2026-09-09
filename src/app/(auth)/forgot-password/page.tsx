@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
 
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3 px-4 text-xs sm:text-sm font-bold text-white shadow-spice-sm hover:bg-primary-600 hover:shadow-saffron-glow transition-all active:scale-[0.99]"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3 px-4 text-xs sm:text-sm font-bold text-white shadow-spice-sm hover:bg-primary-600 hover:shadow-spice-md transition-all active:scale-[0.99]"
               >
                 <span>Send Reset Link</span>
                 <ArrowRight className="h-4 w-4" />

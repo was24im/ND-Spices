@@ -169,7 +169,7 @@ export function ProductCard({ product }: ProductCardProps) {
             className={`relative flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
               addedAnimation
                 ? "bg-secondary-600 text-white"
-                : "bg-primary text-white hover:bg-primary-600 shadow-spice-sm hover:shadow-saffron-glow"
+                : "bg-primary text-white hover:bg-primary-600 shadow-spice-sm hover:shadow-spice-md"
             }`}
           >
             {addedAnimation ? (

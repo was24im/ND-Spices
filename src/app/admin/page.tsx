@@ -254,10 +254,10 @@ export default async function AdminOverviewPage() {
 
           <div className="space-y-4">
             {[
-              { name: "Kashmiri Mogra Saffron (Grade A1)", share: 88, units: "420 packs", color: "bg-turmeric-500" },
+              { name: "Nagaur Pure Red Chilli Powder (Steam Sterilized)", share: 92, units: "580 packs", color: "bg-primary-600" },
               { name: "Wayanad Bold Green Cardamom (8mm+)", share: 74, units: "310 packs", color: "bg-cardamom" },
               { name: "Tellicherry Special Extra Bold (TSEB)", share: 62, units: "260 packs", color: "bg-cinnamon" },
-              { name: "Alleppey Finger Turmeric (6.5% Curcumin)", share: 48, units: "185 packs", color: "bg-amber-600" },
+              { name: "Alleppey Finger Turmeric (6.5% Curcumin)", share: 48, units: "185 packs", color: "bg-turmeric-500" },
             ].map((spice) => (
               <div key={spice.name} className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">

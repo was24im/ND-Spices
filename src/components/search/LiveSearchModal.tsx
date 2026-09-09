@@ -54,12 +54,12 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
     : [];
 
   const popularSearches = [
+    "Red Chilli Powder",
     "Alleppey Cardamom",
-    "Kashmiri Saffron",
+    "Coriander Powder",
     "Tellicherry Pepper",
     "Lakadong Turmeric",
-    "Ceylon Cinnamon",
-    "Guntur Chili",
+    "Royal Garam Masala",
   ];
 
   return (
@@ -78,7 +78,7 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search single-origin spices, origins (e.g. Idukki, Kashmir, Cardamom)..."
+            placeholder="Search single-origin spices, origins (e.g. Nagaur, Idukki, Cardamom)..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -129,7 +129,7 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
             <div className="text-center py-10 space-y-2">
               <p className="font-serif text-base font-bold text-charcoal">No spices matching "{query}"</p>
               <p className="text-xs text-muted-foreground">
-                Try searching for "Cardamom", "Saffron", "Turmeric", or "Pepper".
+                Try searching for "Cardamom", "Red Chilli", "Turmeric", or "Pepper".
               </p>
             </div>
           ) : (

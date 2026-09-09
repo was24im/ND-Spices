@@ -57,7 +57,7 @@ export default function WishlistPage() {
         </div>
         <h1 className="font-serif text-2xl font-bold text-charcoal">Your Wishlist is Empty</h1>
         <p className="text-xs text-muted-foreground">
-          Save your favorite single-origin spices and rare Kashmiri saffron to track fresh harvests.
+          Save your favorite pure spices, stone-ground powders, and authentic blends to track fresh batches.
         </p>
         <Link
           href="/products"

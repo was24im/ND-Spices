@@ -183,9 +183,9 @@ export default function BillingManager({
       items: [
         ...prev.items,
         {
-          description: "Kashmiri Mongra Saffron (Grade A1) - 50g Wholesale Pack",
+          description: "Pure Red Chilli Powder (Steam Sterilized) - 50kg Master Lot",
           quantity: 1,
-          unitPrice: 18000,
+          unitPrice: 12500,
         },
       ],
     }));

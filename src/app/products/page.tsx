@@ -131,7 +131,7 @@ function ProductsContent() {
             Artisanal Indian Spice Vault
           </h1>
           <p className="text-xs sm:text-sm text-cream-200">
-            Handpicked whole pods, stone-ground powders, and rare Kashmiri saffron packed at source.
+            Handpicked whole seeds, pure stone-ground powders, and authentic masala blends packed at factory source.
           </p>
         </div>
       </div>

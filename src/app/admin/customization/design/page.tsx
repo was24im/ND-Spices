@@ -113,7 +113,7 @@ export default function ThemeDesignEditorPage() {
               {/* Primary Cinnamon */}
               <div className="space-y-2 rounded-2xl border border-cream-200 bg-cream-50 p-4">
                 <label className="block text-xs font-bold text-charcoal">
-                  Primary Color (Cinnamon / Saffron)
+                  Primary Brand Color (Deep Cinnamon / Red Spice)
                 </label>
                 <div className="flex items-center gap-3">
                   <input

@@ -24,13 +24,13 @@ export default function HomepageContentEditorPage() {
   // Forms
   const [heroForm, setHeroForm] = useState(DEFAULT_HERO);
   const [marqueeText, setMarqueeText] = useState(
-    "✦ FREE EXPRESS DELIVERY ON ORDERS OVER ₹499 ✦ NEW WINTER HARVEST KASHMIRI MOGRA SAFFRON IN STOCK ✦ USE CODE: WELCOME10 FOR 10% OFF ✦ 100% ETHICALLY SOURCED DIRECT FROM FARMS ✦"
+    "✦ FREE EXPRESS DELIVERY ON ORDERS OVER ₹499 ✦ FACTORY DIRECT PURE RED CHILLI & CORIANDER IN STOCK ✦ USE CODE: WELCOME10 FOR 10% OFF ✦ 100% ETHICALLY SOURCED FROM NAGAUR & ESTATES ✦"
   );
   const [storyForm, setStoryForm] = useState({
     title: "The Terroir of Single-Origin Purity",
     subtitle: "Why multi-estate blended supermarket spices lose their soul",
     paragraph:
-      "Commercial grocery brands blend discarded residual crops from dozens of undisclosed industrial farms. ND Spices partners exclusively with dedicated family estates in Kerala's rainforest hills and Kashmir's alpine valleys to deliver unblended purity.",
+      "Commercial grocery brands blend discarded residual crops and artificial colors. ND Spices partners directly with trusted farms in Nagaur, Rajasthan and Kerala's plantation estates to deliver unadulterated stone-ground purity.",
     image:
       "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
   });
@@ -298,7 +298,7 @@ export default function HomepageContentEditorPage() {
                   />
                   <input
                     type="text"
-                    placeholder="/products?category=exotics-and-saffron"
+                    placeholder="/products?category=masala-blends"
                     value={heroForm.secondaryButtonLink}
                     onChange={(e) =>
                       setHeroForm((prev) => ({ ...prev, secondaryButtonLink: e.target.value }))

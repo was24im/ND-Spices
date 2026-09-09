@@ -30,23 +30,23 @@ export interface AnnouncementContent {
 }
 
 export const DEFAULT_HERO: HeroContent = {
-  badgeText: "Winter 2024 Fresh Harvest Direct from Kerala & Kashmir",
-  heading: "Single-Origin Spices,",
-  headingHighlight: "Pure Heritage Aromatics.",
+  badgeText: "100% Pure Rajasthan Harvest • Stone-Ground & Lab Tested",
+  heading: "Single-Origin Pure Spices,",
+  headingHighlight: "Authentic Heritage Flavour.",
   paragraph:
-    "Grown on multi-generational estates in Idukki, Wayanad, and Kashmir. Cold stone-ground and nitrogen sealed at the source to preserve rich essential oils, authentic heat, and unforgettable fragrance.",
-  primaryButtonText: "Explore Harvests",
+    "Direct from harvest estates and stone-ground mills in Nagaur, Rajasthan. Zero adulteration, zero artificial food coloring, and rich natural essential oils sealed at source.",
+  primaryButtonText: "Explore Pure Spices",
   primaryButtonLink: "/products",
-  secondaryButtonText: "Kashmiri Saffron Vault",
-  secondaryButtonLink: "/products?category=exotics-and-saffron",
+  secondaryButtonText: "Stone-Ground Powders",
+  secondaryButtonLink: "/products?category=ground-spices",
   heroImage:
     "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
-  stat1Value: "8mm+",
-  stat1Label: "Jumbo Green Pods",
-  stat2Value: "7.5%+",
-  stat2Label: "Natural Curcumin",
+  stat1Value: "100%",
+  stat1Label: "Pure & Unadulterated",
+  stat2Value: "₹30+",
+  stat2Label: "Direct Factory Rates",
   stat3Value: "0%",
-  stat3Label: "Fillers & Colors",
+  stat3Label: "Added Colors / Starch",
 };
 
 export const DEFAULT_THEME = {

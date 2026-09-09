@@ -282,7 +282,7 @@ model Lead {
   company         String?
   source          String?     @default("Website Inquiry")
   status          LeadStatus  @default(NEW)
-  spiceInterest   String?     // e.g. "Bulk Saffron 1kg", "Cardamom B2B Wholesale"
+  spiceInterest   String?     // e.g. "Pure Red Chilli 500kg", "Cardamom B2B Wholesale"
   estimatedValue  Decimal?    @db.Decimal(10, 2)
   assignedToId    String?
   createdAt       DateTime    @default(now())
@@ -404,8 +404,8 @@ model WebsiteSettings {
   isCodEnabled     Boolean  @default(true)
   isRazorpayEnabled Boolean @default(true)
   seoTitle         String   @default("ND Spices | 100% Single-Origin Pure Heritage Spices & Aromatics")
-  seoDescription   String   @default("Pure single-origin Indian spices direct from multi-generational heritage estates in Kerala and Kashmir. Cold-ground, lab-tested, and chemical-free.")
-  seoKeywords      String   @default("single origin spices, kashmiri saffron, wayanad black pepper, green cardamom, pure turmeric")
+  seoDescription   String   @default("Pure single-origin Indian spices direct from Rajasthan mills and heritage estates. Cold-ground, lab-tested, and chemical-free.")
+  seoKeywords      String   @default("single origin spices, nagaur red chilli, tellicherry black pepper, green cardamom, pure turmeric")
   ogImageUrl       String?  @default("https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=1200")
   updatedAt        DateTime @updatedAt
 

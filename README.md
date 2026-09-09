@@ -2,14 +2,14 @@
 
 ![ND Spices Banner](https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=80)
 
-**ND Spices** is a full-stack artisanal e-commerce web application celebrating the authentic spice terroir of India. Sourced directly from multi-generational plantation estates in Idukki (Kerala), Wayanad, and Kashmir, cold stone-ground at low temperatures and nitrogen-sealed at origin.
+**ND Spices** is a full-stack artisanal e-commerce web application celebrating the authentic spice terroir of India. Sourced directly from modern manufacturing facilities and spice farms in Nagaur (Rajasthan) and Western Ghats estates, cold stone-ground at low temperatures and sealed for peak freshness.
 
 ---
 
 ## ✨ Features & Highlights
 
 - **⚡ Modern Stack**: Built with Next.js 15/16 App Router (Server & Client Components) in strict TypeScript mode.
-- **🎨 Artisanal Spice Design System**: Custom Tailwind palette inspired by warm saffron (`#D96B27`), cardamom green (`#2D6A4F`), cinnamon brown (`#6F1D1B`), and golden turmeric (`#E9A820`).
+- **🎨 Artisanal Spice Design System**: Custom Tailwind palette inspired by deep cinnamon (`#7B241C`), cardamom emerald (`#196F3D`), golden turmeric (`#D4AC0D`), and warm cream (`#FDFBF7`).
 - **🐘 Serverless Database**: Neon PostgreSQL integration via Prisma ORM with connection pooling for high-concurrency serverless query execution.
 - **🛒 Dynamic Cart & Wishlist**: Zustand stores with persistent `localStorage` syncing, live free shipping progress meter, and sliding cart drawer.
 - **💳 Payment Gateway Ready**: Pre-configured Razorpay checkout (UPI, Cards, Netbanking) with HMAC-SHA256 signature verification and Cash on Delivery (COD).

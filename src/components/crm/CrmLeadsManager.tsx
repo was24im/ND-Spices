@@ -508,7 +508,7 @@ export default function CrmLeadsManager({
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Sent sample 100g Saffron batch; scheduled call for Friday..."
+                  placeholder="e.g. Sent sample 500g Red Chilli Powder batch; scheduled call for Friday..."
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   className="flex-1 rounded-xl border border-cream-300 p-2.5 text-xs focus:border-cinnamon focus:outline-none"
@@ -642,7 +642,7 @@ export default function CrmLeadsManager({
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Kashmiri Saffron 1kg, 8mm Green Cardamom Bulk"
+                  placeholder="e.g. Pure Red Chilli Powder 500kg, 8mm Green Cardamom Bulk"
                   value={createForm.spiceInterest}
                   onChange={(e) =>
                     setCreateForm((prev) => ({ ...prev, spiceInterest: e.target.value }))

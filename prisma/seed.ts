@@ -194,14 +194,6 @@ async function main() {
     },
   });
 
-  const catExotic = await prisma.category.create({
-    data: {
-      name: "Royal Kashmiri Saffron",
-      slug: "exotics-and-saffron",
-      description: "Pristine Grade-A1 Kashmiri Mongra saffron with deep crimson stigmas and natural safranal.",
-      image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
-    },
-  });
 
   // 7. Seed Products and Variants
   const productsData = [
@@ -322,25 +314,6 @@ async function main() {
         { weight: "250g Pack", price: 280, discountedPrice: 260, stockQuantity: 50, sku: "ND-BP-250G" },
         { weight: "500g Pack", price: 520, discountedPrice: 480, stockQuantity: 35, sku: "ND-BP-500G" },
         { weight: "1kg Bulk Pack", price: 950, discountedPrice: 890, stockQuantity: 25, sku: "ND-BP-1KG" },
-      ],
-    },
-    {
-      name: "Royal Kashmiri Mongra Saffron (Grade A1)",
-      slug: "royal-kashmiri-mongra-saffron",
-      categoryId: catExotic.id,
-      origin: "Pampore, Kashmir",
-      description: "100% pure crimson stigmas harvested from the high plateaus of Pampore. Unbroken threads rich in safranal and crocin.",
-      isFeatured: true,
-      inStock: true,
-      rating: 5.0,
-      numReviews: 89,
-      images: [
-        "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
-      ],
-      variants: [
-        { weight: "1g Sealed Box", price: 420, discountedPrice: 380, stockQuantity: 100, sku: "ND-SAF-1G" },
-        { weight: "2g Sealed Box", price: 799, discountedPrice: 720, stockQuantity: 60, sku: "ND-SAF-2G" },
-        { weight: "5g Luxury Box", price: 1899, discountedPrice: 1699, stockQuantity: 30, sku: "ND-SAF-5G" },
       ],
     },
     {

@@ -210,7 +210,7 @@ export function CartDrawer() {
                 <Link
                   href="/checkout"
                   onClick={() => setDrawerOpen(false)}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-white shadow-spice-md hover:bg-primary-600 hover:shadow-saffron-glow transition-all active:scale-[0.99]"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-white shadow-spice-md hover:bg-primary-600 hover:shadow-spice-lg transition-all active:scale-[0.99]"
                 >
                   <span>Proceed to Checkout</span>
                   <ArrowRight className="h-4 w-4" />

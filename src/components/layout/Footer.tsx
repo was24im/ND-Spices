@@ -85,7 +85,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-xs text-cream-400 leading-relaxed max-w-sm">
-              Celebrating pure Indian spice heritage. From the vibrant Red Chilli and Coriander farms of Rajasthan to royal Kashmiri saffron, we deliver unadulterated stone-ground spices straight from estate and factory to kitchen.
+              Celebrating pure Indian spice heritage. From the vibrant Red Chilli and Coriander farms of Rajasthan to the Western Ghats of Kerala, we deliver unadulterated stone-ground spices straight from estate and factory to kitchen.
             </p>
             <div className="space-y-1.5 text-xs text-cream-300">
               <div className="flex items-center gap-2">
@@ -123,8 +123,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=exotics-and-saffron" className="hover:text-primary-300 transition-colors">
-                  Kashmiri Mongra Saffron
+                <Link href="/products?category=ground-spices" className="hover:text-primary-300 transition-colors">
+                  Pure Red Chilli &amp; Turmeric
                 </Link>
               </li>
               <li>
@@ -134,7 +134,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/products" className="hover:text-primary-300 transition-colors">
-                  Gift Boxes & Hampers
+                  All Spices &amp; Bulk Supply
                 </Link>
               </li>
             </ul>

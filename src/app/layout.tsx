@@ -24,15 +24,16 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "ND Spices | 100% Single-Origin Pure Heritage Spices & Aromatics",
   description:
-    "Direct from Indian plantation estates. Explore fresh Alleppey Green Cardamom, Kashmiri Mongra Saffron, Tellicherry Black Pepper, and stone-ground spices sealed for peak aromatic freshness.",
+    "Direct from Indian heritage estates and Nagaur spice mills. Explore pure Red Chilli Powder, High-Curcumin Turmeric, Tellicherry Black Pepper, Alleppey Green Cardamom, and stone-ground spices sealed for peak aromatic freshness.",
   keywords: [
     "ND Spices",
     "Single Origin Spices",
     "Indian Spices Online",
     "Alleppey Cardamom",
-    "Kashmiri Saffron",
+    "Nagaur Red Chilli Powder",
     "Tellicherry Black Pepper",
     "Lakadong Turmeric",
+    "Pure Coriander Powder",
     "Organic Spices India",
   ],
   openGraph: {

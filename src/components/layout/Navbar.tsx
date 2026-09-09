@@ -153,21 +153,21 @@ export function Navbar() {
                         <div className="space-y-2">
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">
                             <Sparkles className="h-3 w-3 text-turmeric-300" />
-                            Seasonal Highlight
+                            Direct Factory Supply
                           </span>
                           <h4 className="font-serif text-base font-bold">
-                            Kashmiri Mongra Saffron (Grade A1)
+                            Pure Red Chilli &amp; Coriander Powders
                           </h4>
                           <p className="text-xs text-cream-200 leading-relaxed">
-                            Unbroken crimson stigmas from Pampore plateau with high crocin potency.
+                            Stone-ground from high-pungency stemless chillies and bold green coriander seeds of Rajasthan.
                           </p>
                         </div>
                         <Link
-                          href="/products/kashmiri-mongra-saffron-grade-a1"
+                          href="/products/pure-red-chilli-powder"
                           onClick={() => setMegaMenuOpen(false)}
                           className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-turmeric-300 hover:text-white transition-colors"
                         >
-                          <span>Explore Saffron Vault</span>
+                          <span>Explore Pure Powders</span>
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Link>
                       </div>
@@ -177,29 +177,29 @@ export function Navbar() {
               </div>
 
               <Link
-                href="/products?category=whole-spices"
-                className="text-sm font-semibold text-charcoal/90 hover:text-cinnamon transition-colors"
-              >
-                Whole Spices
-              </Link>
-              <Link
                 href="/products?category=ground-spices"
                 className="text-sm font-semibold text-charcoal/90 hover:text-cinnamon transition-colors"
               >
-                Stone Ground
+                Pure Powders
               </Link>
               <Link
-                href="/products?category=exotics-and-saffron"
-                className="text-sm font-semibold text-charcoal/90 hover:text-cinnamon transition-colors flex items-center gap-1"
+                href="/products?category=whole-spices"
+                className="text-sm font-semibold text-charcoal/90 hover:text-cinnamon transition-colors"
               >
-                <Sparkles className="h-3.5 w-3.5 text-turmeric" />
-                <span>Saffron & Exotics</span>
+                Whole Spices &amp; Seeds
               </Link>
               <Link
                 href="/products?category=heritage-blends"
                 className="text-sm font-semibold text-charcoal/90 hover:text-cinnamon transition-colors"
               >
-                Heritage Masalas
+                Masala Blends
+              </Link>
+              <Link
+                href="/products"
+                className="text-sm font-semibold text-cinnamon hover:text-cinnamon-700 transition-colors flex items-center gap-1"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-turmeric" />
+                <span>All Spices</span>
               </Link>
             </nav>
 
@@ -294,14 +294,14 @@ export function Navbar() {
                         <span>Saved Wishlist ({totalWishlistCount})</span>
                       </Link>
 
-                      {role === "ADMIN" && (
+                      {(role === "ADMIN" || role === "SUPER_ADMIN") && (
                         <Link
                           href="/admin"
                           onClick={() => setUserDropdownOpen(false)}
                           className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium text-cinnamon hover:bg-cream-100 transition-colors"
                         >
                           <ShieldCheck className="h-4 w-4 text-cinnamon" />
-                          <span className="font-bold">Admin Dashboard</span>
+                          <span className="font-bold">Super Admin Panel</span>
                         </Link>
                       )}
                     </div>
