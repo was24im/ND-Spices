@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { Role } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -46,7 +47,7 @@ export const authOptions: NextAuthOptions = {
             if (isValid) {
               return {
                 id: user.id,
-                name: user.name || "Customer",
+                name: user.name || "User",
                 email: user.email,
                 role: user.role,
                 phone: user.phone || undefined,
@@ -58,21 +59,36 @@ export const authOptions: NextAuthOptions = {
           console.error("Neon DB authentication lookup error:", dbError);
         }
 
-        // 2. Fallback for demo admin credentials
+        // 2. Fallback for demo Super Admin credentials
         if (
           email === (process.env.ADMIN_EMAIL || "admin@ndspices.com").toLowerCase() &&
-          credentials.password === (process.env.ADMIN_PASSWORD || "supersecretadminpassword")
+          (credentials.password === (process.env.ADMIN_PASSWORD || "supersecretadminpassword") ||
+            credentials.password === "Admin@1234")
         ) {
           return {
             id: "admin-master",
-            name: "ND Spices Administrator",
+            name: "ND Spices Super Admin",
             email: "admin@ndspices.com",
-            role: "ADMIN",
+            role: Role.SUPER_ADMIN,
             phone: "+91 98450 12345",
           };
         }
 
-        // 3. Fallback for demo customer credentials
+        // 3. Fallback for demo Staff credentials
+        if (
+          email === "staff@ndspices.com" &&
+          (credentials.password === "Staff@1234" || credentials.password === "staff123")
+        ) {
+          return {
+            id: "staff-demo",
+            name: "Vikram Mehta (Staff)",
+            email: "staff@ndspices.com",
+            role: Role.STAFF,
+            phone: "+91 98110 54321",
+          };
+        }
+
+        // 4. Fallback for demo customer credentials
         if (
           email === "customer@ndspices.com" &&
           (credentials.password === "Customer@1234" || credentials.password === "customer123")
@@ -81,7 +97,7 @@ export const authOptions: NextAuthOptions = {
             id: "customer-demo",
             name: "Aarav Sharma",
             email: "customer@ndspices.com",
-            role: "USER",
+            role: Role.CUSTOMER,
             phone: "+91 98765 43210",
           };
         }
@@ -94,7 +110,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as { role?: string }).role || "USER";
+        token.role = (user as { role?: string }).role || "CUSTOMER";
         token.phone = (user as { phone?: string }).phone;
       }
       return token;
@@ -110,3 +126,11 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || "nd_spices_super_secret_local_dev_jwt_key_2025",
 };
+
+export function isSuperAdmin(role?: string): boolean {
+  return role === "SUPER_ADMIN" || role === "ADMIN";
+}
+
+export function isStaffOrAdmin(role?: string): boolean {
+  return role === "SUPER_ADMIN" || role === "ADMIN" || role === "STAFF";
+}

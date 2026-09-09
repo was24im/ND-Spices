@@ -4,6 +4,10 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { DynamicThemeProvider } from "@/components/providers/DynamicThemeProvider";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { ToastContainer } from "@/components/ui/Toast";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -39,10 +43,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { AuthProvider } from "@/components/providers/AuthProvider";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { ToastContainer } from "@/components/ui/Toast";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,12 +52,14 @@ export default function RootLayout({
     <html lang="en" className={`${jakarta.variable} ${playfair.variable}`}>
       <body className="min-h-screen flex flex-col antialiased bg-[#FDFBF7] text-charcoal selection:bg-cinnamon-200 selection:text-cinnamon-900 pb-16 lg:pb-0">
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <CartDrawer />
-          <MobileBottomNav />
-          <ToastContainer />
+          <DynamicThemeProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartDrawer />
+            <MobileBottomNav />
+            <ToastContainer />
+          </DynamicThemeProvider>
         </AuthProvider>
       </body>
     </html>

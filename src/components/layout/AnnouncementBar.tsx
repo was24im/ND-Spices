@@ -1,15 +1,34 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Sparkles, Leaf, Gift, Truck } from "lucide-react";
 
 export function AnnouncementBar() {
-  const marqueeItems = [
-    { icon: Sparkles, text: "Festive Spice Offer: Use code WELCOME10 for 10% OFF your first order" },
-    { icon: Truck, text: "Free Express Delivery across India on orders over ₹499" },
-    { icon: Leaf, text: "100% Single-Origin Harvests direct from Idukki, Kashmir & Wayanad estates" },
-    { icon: Gift, text: "Artisanal Wooden Gift Boxes now available for corporate & wedding hampers" },
-  ];
+  const [customText, setCustomText] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/cms?key=homepage.announcement")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.content && data.content.marqueeText) {
+          setCustomText(data.content.marqueeText);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const marqueeItems = customText
+    ? [
+        { icon: Sparkles, text: customText },
+        { icon: Truck, text: "Free Express Delivery across India on orders over ₹499" },
+        { icon: Leaf, text: "100% Single-Origin Harvests direct from Idukki, Kashmir & Wayanad estates" },
+      ]
+    : [
+        { icon: Sparkles, text: "Festive Spice Offer: Use code WELCOME10 for 10% OFF your first order" },
+        { icon: Truck, text: "Free Express Delivery across India on orders over ₹499" },
+        { icon: Leaf, text: "100% Single-Origin Harvests direct from Idukki, Kashmir & Wayanad estates" },
+        { icon: Gift, text: "Artisanal Wooden Gift Boxes now available for corporate & wedding hampers" },
+      ];
 
   return (
     <div className="bg-cinnamon text-white text-[11px] sm:text-xs py-2 overflow-hidden border-b border-cinnamon-600 select-none">

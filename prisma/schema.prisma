@@ -11,8 +11,11 @@ datasource db {
 }
 
 enum Role {
-  USER
+  SUPER_ADMIN
+  STAFF
+  CUSTOMER
   ADMIN
+  USER
 }
 
 enum OrderStatus {
@@ -35,12 +38,35 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  CONVERTED
+  LOST
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+  CANCELLED
+}
+
+enum MediaType {
+  IMAGE
+  BANNER
+  LOGO
+  DOCUMENT
+}
+
 model User {
   id           String         @id @default(cuid())
   name         String?
   email        String         @unique
   passwordHash String?
-  role         Role           @default(USER)
+  role         Role           @default(CUSTOMER)
   phone        String?
   image        String?
   createdAt    DateTime       @default(now())
@@ -51,6 +77,10 @@ model User {
   cartItems    CartItem[]
   wishlist     WishlistItem[]
   reviews      Review[]
+  assignedLeads Lead[]        @relation("AssignedStaff")
+  leadNotes    LeadNote[]
+  invoicesCreated Invoice[]   @relation("InvoiceCreator")
+  auditLogs    AuditLog[]
 
   @@map("users")
 }
@@ -81,6 +111,8 @@ model Category {
   slug        String    @unique
   image       String?
   description String?   @db.Text
+  displayOrder Int      @default(0)
+  isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -99,6 +131,7 @@ model Product {
   origin      String         // e.g. "Idukki Hills, Kerala", "Pampore, Kashmir"
   isFeatured  Boolean        @default(false)
   inStock     Boolean        @default(true)
+  isVisible   Boolean        @default(true)
   rating      Float          @default(5.0)
   numReviews  Int            @default(0)
   createdAt   DateTime       @default(now())
@@ -227,6 +260,7 @@ model Review {
   rating             Int      @default(5)
   comment            String   @db.Text
   isVerifiedPurchase Boolean  @default(false)
+  isApproved         Boolean  @default(true)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -235,4 +269,185 @@ model Review {
 
   @@index([productId])
   @@map("reviews")
+}
+
+// ----------------------------------------------------
+// CRM: Leads & Lead Follow-up Notes
+// ----------------------------------------------------
+model Lead {
+  id              String      @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  company         String?
+  source          String?     @default("Website Inquiry")
+  status          LeadStatus  @default(NEW)
+  spiceInterest   String?     // e.g. "Bulk Saffron 1kg", "Cardamom B2B Wholesale"
+  estimatedValue  Decimal?    @db.Decimal(10, 2)
+  assignedToId    String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  assignedTo      User?       @relation("AssignedStaff", fields: [assignedToId], references: [id], onDelete: SetNull)
+  notes           LeadNote[]
+
+  @@index([assignedToId])
+  @@index([status])
+  @@map("leads")
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  leadId    String
+  authorId  String
+  note      String   @db.Text
+  createdAt DateTime @default(now())
+
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@map("lead_notes")
+}
+
+// ----------------------------------------------------
+// Billing & Invoices
+// ----------------------------------------------------
+model Invoice {
+  id              String        @id @default(cuid())
+  invoiceNumber   String        @unique
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  billingAddress  String        @db.Text
+  subtotal        Decimal       @db.Decimal(10, 2)
+  taxPercent      Float         @default(5.0)
+  taxAmount       Decimal       @db.Decimal(10, 2)
+  discountAmount  Decimal       @default(0) @db.Decimal(10, 2)
+  finalAmount     Decimal       @db.Decimal(10, 2)
+  status          InvoiceStatus @default(ISSUED)
+  dueDate         DateTime?
+  paymentMethod   String        @default("Bank Transfer (NEFT/RTGS)")
+  notes           String?       @db.Text
+  createdById     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  createdBy       User?         @relation("InvoiceCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  items           InvoiceItem[]
+
+  @@index([invoiceNumber])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  totalPrice  Decimal  @db.Decimal(10, 2)
+
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+// ----------------------------------------------------
+// CMS & Website Customization Engine
+// ----------------------------------------------------
+model WebsiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., "homepage.hero", "homepage.story", "announcement"
+  section   String   // e.g. "hero", "about", "banner", "footer"
+  content   Json     // structured JSON payload
+  updatedAt DateTime @updatedAt
+
+  @@map("website_content")
+}
+
+model ThemeSettings {
+  id             String   @id @default("default-theme")
+  logoUrl        String?
+  faviconUrl     String?
+  primaryColor   String   @default("#7B241C") // Deep Cinnamon
+  secondaryColor String   @default("#196F3D") // Cardamom Emerald
+  accentColor    String   @default("#D4AC0D") // Golden Turmeric
+  backgroundColor String  @default("#FDFBF7") // Warm Cream
+  textColor      String   @default("#1E1E1E") // Dark Charcoal
+  fontFamily     String   @default("Playfair Display") // Serif / Sans / Playfair
+  borderRadius   String   @default("1.5rem") // rounded-3xl / 1rem / 0.5rem
+  buttonStyle    String   @default("pill") // pill / rounded / sharp
+  heroBannerUrl  String?
+  updatedAt      DateTime @updatedAt
+
+  @@map("theme_settings")
+}
+
+model WebsiteSettings {
+  id               String   @id @default("default-settings")
+  storeName        String   @default("ND Spices")
+  tagLine          String   @default("100% Single-Origin Pure Heritage Spices & Aromatics")
+  contactEmail     String   @default("hello@ndspices.com")
+  contactPhone     String   @default("+91 98450 12345")
+  address          String   @default("Wayanad Estate Hub, Kerala 673121, India")
+  gstNumber        String   @default("32AABCU9603R1ZM")
+  fssaiNumber      String   @default("11321004000182")
+  instagramUrl     String?  @default("https://instagram.com/ndspices")
+  facebookUrl      String?  @default("https://facebook.com/ndspices")
+  whatsappNumber   String?  @default("+919845012345")
+  isWhatsappEnabled Boolean @default(true)
+  freeShippingMin  Decimal  @default(499) @db.Decimal(10, 2)
+  flatShippingRate Decimal  @default(60) @db.Decimal(10, 2)
+  taxRatePercent   Float    @default(5.0)
+  isCodEnabled     Boolean  @default(true)
+  isRazorpayEnabled Boolean @default(true)
+  seoTitle         String   @default("ND Spices | 100% Single-Origin Pure Heritage Spices & Aromatics")
+  seoDescription   String   @default("Pure single-origin Indian spices direct from multi-generational heritage estates in Kerala and Kashmir. Cold-ground, lab-tested, and chemical-free.")
+  seoKeywords      String   @default("single origin spices, kashmiri saffron, wayanad black pepper, green cardamom, pure turmeric")
+  ogImageUrl       String?  @default("https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=1200")
+  updatedAt        DateTime @updatedAt
+
+  @@map("website_settings")
+}
+
+// ----------------------------------------------------
+// Media Asset Library
+// ----------------------------------------------------
+model MediaAsset {
+  id        String    @id @default(cuid())
+  title     String
+  url       String
+  type      MediaType @default(IMAGE)
+  category  String    @default("products") // logos, banners, products, terroirs, general
+  sizeBytes Int?
+  createdAt DateTime  @default(now())
+
+  @@index([category])
+  @@map("media_assets")
+}
+
+// ----------------------------------------------------
+// Audit Logs (Super Admin & Staff Action History)
+// ----------------------------------------------------
+model AuditLog {
+  id            String   @id @default(cuid())
+  userId        String?
+  userName      String?
+  userEmail     String?
+  userRole      String?
+  action        String   // e.g. "UPDATE_PRODUCT", "CHANGE_THEME", "UPDATE_HOMEPAGE", "CREATE_INVOICE"
+  module        String   // e.g. "PRODUCTS", "THEME", "CMS", "BILLING", "CRM", "SETTINGS"
+  targetId      String?  // ID of affected entity
+  targetName    String?  // Name of affected entity
+  previousValue Json?
+  newValue      Json?
+  createdAt     DateTime @default(now())
+
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([module])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

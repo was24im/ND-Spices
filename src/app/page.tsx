@@ -5,13 +5,67 @@ import { ArrowRight, Sparkles, ShieldCheck, Award, Flame, Leaf, CheckCircle2, St
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/lib/mockData";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Button } from "@/components/ui/Button";
+import { getWebsiteContent, DEFAULT_HERO, HeroContent } from "@/lib/cms";
+import { prisma } from "@/lib/db";
 
-export default function HomePage() {
-  const bestsellers = MOCK_PRODUCTS.filter((p) => p.bestseller);
+export const revalidate = 0; // Fresh dynamic data on every request
+
+export default async function HomePage() {
+  const hero: HeroContent = await getWebsiteContent("homepage.hero", DEFAULT_HERO);
+
+  // Fetch bestsellers from database if available, else mock data
+  let bestsellers = MOCK_PRODUCTS.filter((p) => p.bestseller);
+  let categories = MOCK_CATEGORIES;
+
+  try {
+    const dbProducts = await prisma.product.findMany({
+      where: { isFeatured: true },
+      include: {
+        category: true,
+        variants: true,
+      },
+      take: 8,
+    });
+
+    if (dbProducts && dbProducts.length > 0) {
+      bestsellers = dbProducts.map((p) => ({
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        category: p.category.name,
+        origin: p.origin || "Kerala, India",
+        grade: "Grade A1 Export Quality",
+        description: p.description,
+        rating: p.rating,
+        reviewCount: p.numReviews,
+        bestseller: p.isFeatured,
+        harvestDate: "Winter 2024",
+        aromaProfile: "Rich, aromatic, intense",
+        images: p.images && p.images.length > 0 ? p.images : ["/spices/cardamom.jpg"],
+        variants: p.variants.map((v) => ({
+          id: v.id,
+          size: v.weight,
+          price: Number(v.price),
+          discountPrice: v.discountedPrice ? Number(v.discountedPrice) : undefined,
+          stock: v.stockQuantity,
+          sku: v.sku,
+        })),
+      })) as any;
+    }
+
+    const dbCategories = await prisma.category.findMany({
+      take: 4,
+    });
+    if (dbCategories && dbCategories.length > 0) {
+      categories = dbCategories as any;
+    }
+  } catch (error) {
+    console.error("Database fetch fallback:", error);
+  }
 
   return (
     <div className="space-y-12 sm:space-y-16 pb-16">
-      {/* Hero Section */}
+      {/* Dynamic Hero Section - Powered by Neon DB CMS */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#FAF7F2] via-[#F4EFE6] to-[#FAF7F2] pt-8 sm:pt-14 pb-16 border-b border-cream-300/80">
         {/* Background decorative ambient glow */}
         <div className="absolute top-0 right-1/4 h-96 w-96 rounded-full bg-primary-200/40 blur-3xl pointer-events-none" />
@@ -21,32 +75,34 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full border border-secondary-300 bg-secondary-50 px-3.5 py-1 text-xs font-semibold text-secondary-800 shadow-xs">
-                <Leaf className="h-3.5 w-3.5 text-secondary-600" />
-                <span>Winter 2024 Fresh Harvest Direct from Kerala & Kashmir</span>
-              </div>
+              {hero.badgeText && (
+                <div className="inline-flex items-center gap-2 rounded-full border border-secondary-300 bg-secondary-50 px-3.5 py-1 text-xs font-semibold text-secondary-800 shadow-xs">
+                  <Leaf className="h-3.5 w-3.5 text-secondary-600" />
+                  <span>{hero.badgeText}</span>
+                </div>
+              )}
 
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-extrabold text-spice-dark tracking-tight leading-[1.15]">
-                Single-Origin Spices,{" "}
-                <span className="text-primary italic">Pure Heritage Aromatics.</span>
+                {hero.heading}{" "}
+                <span className="text-primary italic">{hero.headingHighlight}</span>
               </h1>
 
               <p className="text-sm sm:text-base lg:text-lg text-spice-muted leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                Grown on multi-generational estates in Idukki, Wayanad, and Kashmir. Cold stone-ground and nitrogen sealed at the source to preserve rich essential oils, authentic heat, and unforgettable fragrance.
+                {hero.paragraph}
               </p>
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
-                <Link href="/products" className="w-full sm:w-auto">
+                <Link href={hero.primaryButtonLink || "/products"} className="w-full sm:w-auto">
                   <Button size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary-600 text-white font-bold text-sm shadow-spice-md hover:shadow-saffron-glow">
-                    <span>Explore Harvests</span>
+                    <span>{hero.primaryButtonText || "Explore Harvests"}</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/products?category=exotics-and-saffron" className="w-full sm:w-auto">
+                <Link href={hero.secondaryButtonLink || "/products"} className="w-full sm:w-auto">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto text-spice-dark border-cream-400 hover:bg-cream-200 text-sm font-semibold">
                     <Sparkles className="h-4 w-4 text-primary mr-1.5" />
-                    Kashmiri Saffron Vault
+                    {hero.secondaryButtonText || "Specialty Spices"}
                   </Button>
                 </Link>
               </div>
@@ -54,16 +110,16 @@ export default function HomePage() {
               {/* Trust Indicators */}
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-cream-300/80 text-left max-w-lg mx-auto lg:mx-0">
                 <div>
-                  <p className="font-display text-lg sm:text-2xl font-black text-spice-dark">8mm+</p>
-                  <p className="text-[11px] text-spice-muted">Jumbo Green Pods</p>
+                  <p className="font-display text-lg sm:text-2xl font-black text-spice-dark">{hero.stat1Value || "8mm+"}</p>
+                  <p className="text-[11px] text-spice-muted">{hero.stat1Label || "Jumbo Pods"}</p>
                 </div>
                 <div>
-                  <p className="font-display text-lg sm:text-2xl font-black text-spice-dark">7.5%+</p>
-                  <p className="text-[11px] text-spice-muted">Natural Curcumin</p>
+                  <p className="font-display text-lg sm:text-2xl font-black text-spice-dark">{hero.stat2Value || "7.5%+"}</p>
+                  <p className="text-[11px] text-spice-muted">{hero.stat2Label || "Curcumin"}</p>
                 </div>
                 <div>
-                  <p className="font-display text-lg sm:text-2xl font-black text-spice-dark">0%</p>
-                  <p className="text-[11px] text-spice-muted">Fillers & Colors</p>
+                  <p className="font-display text-lg sm:text-2xl font-black text-spice-dark">{hero.stat3Value || "0%"}</p>
+                  <p className="text-[11px] text-spice-muted">{hero.stat3Label || "Fillers"}</p>
                 </div>
               </div>
             </div>
@@ -72,7 +128,7 @@ export default function HomePage() {
             <div className="lg:col-span-5 relative flex justify-center">
               <div className="relative w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden border-2 border-white shadow-spice-lg bg-cream-100">
                 <Image
-                  src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85"
+                  src={hero.heroImage || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85"}
                   alt="Artisanal Indian Spices Harvest"
                   fill
                   priority
@@ -119,7 +175,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {MOCK_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/products?category=${cat.slug}`}

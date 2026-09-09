@@ -1,10 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShieldCheck, Truck, Sparkles, RefreshCw, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { ShieldCheck, Truck, Sparkles, RefreshCw, Mail, Phone, MapPin, Heart, ExternalLink } from "lucide-react";
+import { DEFAULT_SETTINGS } from "@/lib/cms";
 
 export function Footer() {
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setSettings(data.settings);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <footer className="bg-spice-dark text-cream-200 border-t border-spice-charcoal">
       {/* Heritage Quality Badges */}
@@ -64,9 +78,9 @@ export function Footer() {
                 <span className="text-white font-serif font-black text-lg">ND</span>
               </div>
               <div>
-                <h3 className="font-serif text-xl font-bold text-white">ND Spices</h3>
+                <h3 className="font-serif text-xl font-bold text-white">{settings.storeName}</h3>
                 <p className="text-[10px] uppercase font-semibold text-secondary-400 tracking-wider">
-                  Pure Heritage Aromatics
+                  {settings.tagLine || "Pure Heritage Aromatics"}
                 </p>
               </div>
             </div>
@@ -75,17 +89,22 @@ export function Footer() {
             </p>
             <div className="space-y-1.5 text-xs text-cream-300">
               <div className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-primary-400" />
-                <span>Spice Estate Route, Idukki District, Kerala - 685565</span>
+                <MapPin className="h-3.5 w-3.5 text-primary-400 shrink-0" />
+                <span>{settings.address}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="h-3.5 w-3.5 text-primary-400" />
-                <span>+91 98450 12345 (Mon - Sat, 9am - 7pm)</span>
+                <Phone className="h-3.5 w-3.5 text-primary-400 shrink-0" />
+                <span>{settings.contactPhone} (Mon - Sat, 9am - 7pm)</span>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="h-3.5 w-3.5 text-primary-400" />
-                <span>support@ndspices.com</span>
+                <Mail className="h-3.5 w-3.5 text-primary-400 shrink-0" />
+                <span>{settings.contactEmail}</span>
               </div>
+              {settings.fssaiNumber && (
+                <div className="text-[11px] text-cream-400/80 font-mono mt-2">
+                  FSSAI Lic No: {settings.fssaiNumber} | GSTIN: {settings.gstNumber}
+                </div>
+              )}
             </div>
           </div>
 
@@ -126,8 +145,8 @@ export function Footer() {
             <h4 className="font-serif text-sm font-bold text-white mb-3">Customer Care</h4>
             <ul className="space-y-2 text-xs text-cream-300">
               <li>
-                <Link href="/checkout" className="hover:text-primary-300 transition-colors">
-                  Track Your Order
+                <Link href="/account" className="hover:text-primary-300 transition-colors">
+                  Track Your Orders
                 </Link>
               </li>
               <li>
@@ -141,13 +160,9 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="hover:text-primary-300 transition-colors">
-                  Bulk & B2B Inquiries
-                </Link>
-              </li>
-              <li>
-                <Link href="/products" className="hover:text-primary-300 transition-colors">
-                  Laboratory Test Reports
+                <Link href="/staff/login" className="hover:text-primary-300 transition-colors flex items-center gap-1 text-cream-400">
+                  <span>Staff Portal</span>
+                  <ExternalLink className="h-3 w-3" />
                 </Link>
               </li>
             </ul>
@@ -177,7 +192,7 @@ export function Footer() {
 
         {/* Bottom copyright */}
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-cream-400 gap-4">
-          <p>© {new Date().getFullYear()} ND Spices Private Limited. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {settings.storeName} Private Limited. All rights reserved.</p>
           <div className="flex items-center gap-1">
             <span>Handcrafted with</span>
             <Heart className="h-3 w-3 text-cinnamon-400 fill-current" />
