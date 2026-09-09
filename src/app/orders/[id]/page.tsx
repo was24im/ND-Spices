@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import {
   Package,
   Truck,
@@ -29,13 +30,9 @@ const STAGES = [
   { key: "DELIVERED", label: "Delivered", desc: "Delivered & fresh" },
 ];
 
-export default function OrderDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const resolvedParams = use(params);
-  const orderId = resolvedParams.id;
+export default function OrderDetailPage() {
+  const params = useParams();
+  const orderId = params?.id as string;
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
