@@ -85,7 +85,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-xs text-cream-400 leading-relaxed max-w-sm">
-              Celebrating the authentic spice terroir of India. From the pristine cardamom hills of Idukki to the royal saffron fields of Kashmir, we deliver unadulterated luxury aromatics straight from soil to kitchen.
+              Celebrating pure Indian spice heritage. From the vibrant Red Chilli and Coriander farms of Rajasthan to royal Kashmiri saffron, we deliver unadulterated stone-ground spices straight from estate and factory to kitchen.
             </p>
             <div className="space-y-1.5 text-xs text-cream-300">
               <div className="flex items-center gap-2">

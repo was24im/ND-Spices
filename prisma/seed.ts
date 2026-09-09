@@ -39,17 +39,17 @@ async function main() {
       email: "admin@ndspices.com",
       passwordHash: superAdminPasswordHash,
       role: Role.SUPER_ADMIN,
-      phone: "+91 98450 12345",
+      phone: "+91 8047524652",
     },
   });
 
   const staff = await prisma.user.create({
     data: {
-      name: "Vikram Mehta (Sales & Billing)",
+      name: "Sohel Afroj (Sales & Operations)",
       email: "staff@ndspices.com",
       passwordHash: staffPasswordHash,
       role: Role.STAFF,
-      phone: "+91 98110 54321",
+      phone: "+91 8047524652",
     },
   });
 
@@ -70,22 +70,22 @@ async function main() {
     data: {
       id: "default-settings",
       storeName: "ND Spices",
-      tagLine: "100% Single-Origin Pure Heritage Spices & Aromatics",
-      contactEmail: "hello@ndspices.com",
-      contactPhone: "+91 98450 12345",
-      address: "Wayanad Estate Hub, Kerala 673121, India",
-      gstNumber: "32AABCU9603R1ZM",
-      fssaiNumber: "11321004000182",
-      whatsappNumber: "+919845012345",
+      tagLine: "100% Pure Heritage Spices & Cold Stone-Ground Aromatics",
+      contactEmail: "contact@ndspices.com",
+      contactPhone: "+91 8047524652",
+      address: "Sherani Jamat Khana Ke Paas, Noori Mohalla, Sherani Abad, Didwana Kuchaman, Nagaur, Rajasthan - 341302, India",
+      gstNumber: "08AABCU9603R1ZM",
+      fssaiNumber: "12221004000182",
+      whatsappNumber: "+918047524652",
       isWhatsappEnabled: true,
       freeShippingMin: 499 as any,
-      flatShippingRate: 60 as any,
+      flatShippingRate: 50 as any,
       taxRatePercent: 5.0,
       isCodEnabled: true,
       isRazorpayEnabled: true,
-      seoTitle: "ND Spices | 100% Single-Origin Pure Heritage Spices & Aromatics",
-      seoDescription: "Single-origin pure Indian spices directly from Kerala and Kashmir estates. Cold stone-ground, lab-tested, unadulterated.",
-      seoKeywords: "kashmiri saffron, green cardamom, wayanad black pepper, single origin spices",
+      seoTitle: "ND Spices | Pure Red Chilli, Coriander & Turmeric Powders, Nagaur",
+      seoDescription: "Manufacturer & supplier of 100% pure Red Chilli Powder, Coriander Powder, Coriander Seeds, and High Curcumin Turmeric Powder. Based in Nagaur, Rajasthan.",
+      seoKeywords: "red chilli powder, coriander powder, coriander seeds, turmeric powder, pure spices nagaur rajasthan, nd spices",
       ogImageUrl: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=1200",
     },
   });
@@ -112,37 +112,37 @@ async function main() {
         key: "homepage.hero",
         section: "hero",
         content: {
-          badgeText: "Winter 2024 Fresh Harvest Direct from Kerala & Kashmir",
-          heading: "Single-Origin Spices,",
-          headingHighlight: "Pure Heritage Aromatics.",
-          paragraph: "Grown on multi-generational estates in Idukki, Wayanad, and Kashmir. Cold stone-ground and nitrogen sealed at the source to preserve rich essential oils, authentic heat, and unforgettable fragrance.",
-          primaryButtonText: "Explore Harvests",
+          badgeText: "Direct from Rajasthan Farms • Lab Tested 100% Pure",
+          heading: "Pure Heritage Spices,",
+          headingHighlight: "Authentic Stone-Ground Flavour.",
+          paragraph: "Manufactured from selected stemless red chillies, machine-cleaned coriander seeds, and golden turmeric rhizomes. Free from artificial colors, chemical preservatives, and adulterants.",
+          primaryButtonText: "Explore Spice Harvests",
           primaryButtonLink: "/products",
-          secondaryButtonText: "Kashmiri Saffron Vault",
-          secondaryButtonLink: "/products?category=exotics-and-saffron",
+          secondaryButtonText: "B2B Bulk Inquiries",
+          secondaryButtonLink: "/products?category=ground-spices",
           heroImage: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
-          stat1Value: "8mm+",
-          stat1Label: "Jumbo Green Pods",
-          stat2Value: "7.5%+",
-          stat2Label: "Natural Curcumin",
+          stat1Value: "100%",
+          stat1Label: "Pure & Unadulterated",
+          stat2Value: "₹30+",
+          stat2Label: "Direct Factory Rates",
           stat3Value: "0%",
-          stat3Label: "Fillers & Colors",
+          stat3Label: "Added Colors / Starch",
         },
       },
       {
         key: "homepage.announcement",
         section: "banner",
         content: {
-          marqueeText: "✦ FREE EXPRESS DELIVERY ON ORDERS OVER ₹499 ✦ NEW WINTER HARVEST KASHMIRI MOGRA SAFFRON IN STOCK ✦ USE CODE: WELCOME10 FOR 10% OFF ✦ 100% ETHICALLY SOURCED DIRECT FROM FARMS ✦",
+          marqueeText: "✦ FREE EXPRESS DELIVERY ON ORDERS OVER ₹499 ✦ PURE RED CHILLI & CORIANDER POWDER AT DIRECT FACTORY RATES ✦ USE CODE: WELCOME10 FOR 10% OFF ✦ B2B & BULK ORDERS WELCOME ✦",
         },
       },
       {
         key: "homepage.story",
         section: "story",
         content: {
-          title: "The Terroir of Single-Origin Purity",
-          subtitle: "Why multi-estate blended supermarket spices lose their soul",
-          paragraph: "Commercial grocery brands blend discarded residual crops from dozens of undisclosed industrial farms. ND Spices partners exclusively with dedicated family estates in Kerala's rainforest hills and Kashmir's alpine valleys to deliver unblended purity.",
+          title: "Authentic Spice Heritage of Nagaur",
+          subtitle: "Why unadulterated stone-ground spices make all the difference",
+          paragraph: "Unlike commercial supermarket brands that extract precious volatile oils or blend artificial coloring, ND Spices processes pure, hand-selected spices with traditional care to preserve natural aroma, heat, and nutrition.",
           image: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
         },
       },
@@ -167,285 +167,358 @@ async function main() {
   });
 
   // 6. Seed Categories
-  const catWhole = await prisma.category.create({
+  const catGround = await prisma.category.create({
     data: {
-      name: "Whole Spices",
-      slug: "whole-spices",
-      description: "Sun-dried, unadulterated whole pods, seeds, and barks overflowing with volatile aromatic oils.",
+      name: "Pure Ground Powders",
+      slug: "ground-spices",
+      description: "100% Pure Red Chilli, Turmeric, and Coriander powders stone-ground below 35°C with zero colorants.",
       image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80",
     },
   });
 
-  const catGround = await prisma.category.create({
+  const catWhole = await prisma.category.create({
     data: {
-      name: "Cold Stone-Ground Powders",
-      slug: "ground-spices",
-      description: "Milled on traditional slow stone chakki mills below 35°C to protect delicate essential aroma compounds.",
-      image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
-    },
-  });
-
-  const catExotic = await prisma.category.create({
-    data: {
-      name: "Exotics & Saffron",
-      slug: "exotics-and-saffron",
-      description: "Pristine Grade-A1 Kashmiri Mongra saffron, high-elevation mace blades, and rare botanicals.",
+      name: "Whole Spices & Seeds",
+      slug: "whole-spices",
+      description: "Machine-cleaned Coriander Seeds, Tellicherry Black Pepper, and Extra Bold Green Cardamom.",
       image: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
     },
   });
 
   const catBlends = await prisma.category.create({
     data: {
-      name: "Heritage Masalas",
+      name: "Authentic Masala Blends",
       slug: "heritage-blends",
-      description: "Generational secret spice recipes roasted in brass urlis for royal curries, biryanis, and chai.",
+      description: "Traditional 18-spice slow-roasted garam masalas for rich curries and royal biryanis.",
       image: "https://images.unsplash.com/photo-1532336414038-cf19250c5757?auto=format&fit=crop&w=800&q=80",
+    },
+  });
+
+  const catExotic = await prisma.category.create({
+    data: {
+      name: "Royal Kashmiri Saffron",
+      slug: "exotics-and-saffron",
+      description: "Pristine Grade-A1 Kashmiri Mongra saffron with deep crimson stigmas and natural safranal.",
+      image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
     },
   });
 
   // 7. Seed Products and Variants
   const productsData = [
     {
-      name: "Alleppey Green Cardamom (8mm+ Jumbo Pods)",
-      slug: "alleppey-green-cardamom-jumbo",
-      categoryId: catWhole.id,
-      origin: "Idukki Hills, Kerala",
-      description: "Handpicked from mist-covered plantations at 3,500ft elevation. Graded at 8mm+ diameter, packed with dark resinous seeds overflowing with intense cineole and sweet herbal eucalyptus fragrance.",
+      name: "Pure Red Chilli Powder (Lal Mirch Powder)",
+      slug: "pure-red-chilli-powder",
+      categoryId: catGround.id,
+      origin: "Nagaur, Rajasthan",
+      description: "Finely ground from selected stemless sun-dried red chillies of Rajasthan. Delivers an authentic vibrant red color and natural fiery warmth without any artificial color enhancers or fillers.",
       isFeatured: true,
       inStock: true,
       rating: 4.9,
-      numReviews: 142,
+      numReviews: 186,
       images: [
-        "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80",
       ],
       variants: [
-        { weight: "100g Glass Jar", price: 349, discountedPrice: 319, stockQuantity: 100, sku: "ND-CRD-100G" },
-        { weight: "250g Aroma Pouch", price: 799, discountedPrice: 729, stockQuantity: 60, sku: "ND-CRD-250G" },
-        { weight: "500g Value Pack", price: 1499, discountedPrice: 1349, stockQuantity: 30, sku: "ND-CRD-500G" },
+        { weight: "100g Pack", price: 35, discountedPrice: 30, stockQuantity: 150, sku: "ND-RC-100G" },
+        { weight: "250g Pack", price: 75, discountedPrice: 70, stockQuantity: 100, sku: "ND-RC-250G" },
+        { weight: "500g Pack", price: 140, discountedPrice: 130, stockQuantity: 80, sku: "ND-RC-500G" },
+        { weight: "1kg Bulk Pack", price: 240, discountedPrice: 220, stockQuantity: 50, sku: "ND-RC-1KG" },
       ],
     },
     {
-      name: "Kashmiri Mongra Saffron (Grade A1)",
-      slug: "kashmiri-mongra-saffron-grade-a1",
-      categoryId: catExotic.id,
-      origin: "Pampore, Kashmir",
-      description: "100% pure crimson stigmas harvested from the high plateaus of Pampore. Unbroken threads rich in safranal and crocin for radiant golden tint and intoxicating floral honey aroma.",
+      name: "Pure Coriander Powder (Dhaniya Powder)",
+      slug: "pure-coriander-powder",
+      categoryId: catGround.id,
+      origin: "Nagaur, Rajasthan",
+      description: "Stone-ground from high-grade green coriander seeds of Rajasthan. Carefully cleaned and milled at gentle low temperatures to preserve natural volatile essential oils.",
       isFeatured: true,
       inStock: true,
-      rating: 5.0,
-      numReviews: 98,
+      rating: 4.8,
+      numReviews: 142,
       images: [
         "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
       ],
       variants: [
-        { weight: "1g Royal Acrylic Box", price: 499, discountedPrice: 449, stockQuantity: 150, sku: "ND-SAF-1G" },
-        { weight: "2g Collectors Tin", price: 949, discountedPrice: 849, stockQuantity: 80, sku: "ND-SAF-2G" },
-        { weight: "5g Heritage Vault", price: 2199, discountedPrice: 1999, stockQuantity: 40, sku: "ND-SAF-5G" },
+        { weight: "100g Pack", price: 30, discountedPrice: 25, stockQuantity: 180, sku: "ND-CP-100G" },
+        { weight: "250g Pack", price: 65, discountedPrice: 60, stockQuantity: 120, sku: "ND-CP-250G" },
+        { weight: "500g Pack", price: 120, discountedPrice: 110, stockQuantity: 90, sku: "ND-CP-500G" },
+        { weight: "1kg Bulk Pack", price: 200, discountedPrice: 180, stockQuantity: 60, sku: "ND-CP-1KG" },
       ],
     },
     {
-      name: "Tellicherry Garbled Extra Bold Black Pepper (TGSEB)",
-      slug: "tellicherry-black-pepper-tgseb",
-      categoryId: catWhole.id,
-      origin: "Thalassery, Malabar Coast",
-      description: "The crown jewel of peppercorns. Only the top 10% largest, fully ripened 4.75mm+ berries qualify as TGSEB. Delivers rich warmth paired with complex citrus and cedarwood nuances.",
-      isFeatured: true,
-      inStock: true,
-      rating: 4.8,
-      numReviews: 115,
-      images: [
-        "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=800&q=80",
-      ],
-      variants: [
-        { weight: "150g Glass Grinder Jar", price: 280, discountedPrice: 250, stockQuantity: 85, sku: "ND-PEP-150G" },
-        { weight: "500g Chef Pack", price: 699, discountedPrice: 629, stockQuantity: 50, sku: "ND-PEP-500G" },
-      ],
-    },
-    {
-      name: "Lakadong Turmeric Powder (7.5%+ High Curcumin)",
-      slug: "lakadong-high-curcumin-turmeric-powder",
+      name: "Pure Turmeric Powder (High Curcumin Haldi)",
+      slug: "pure-turmeric-powder",
       categoryId: catGround.id,
-      origin: "Jaintia Hills, Meghalaya",
-      description: "World-renowned Lakadong rhizomes boasting an astounding 7.5% - 8.2% natural curcumin content. Intense earthy sweetness and potent bioactive therapeutic power.",
+      origin: "Nagaur, Rajasthan",
+      description: "Finely milled pure golden turmeric rhizomes containing high natural curcumin levels. Zero lead chromate, chalk, or chemical coloring.",
       isFeatured: true,
       inStock: true,
       rating: 4.9,
-      numReviews: 210,
+      numReviews: 168,
       images: [
         "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
       ],
       variants: [
-        { weight: "200g Eco Tin", price: 249, discountedPrice: 220, stockQuantity: 120, sku: "ND-TUR-200G" },
-        { weight: "500g Foil Pouch", price: 499, discountedPrice: 449, stockQuantity: 70, sku: "ND-TUR-500G" },
+        { weight: "100g Pack", price: 35, discountedPrice: 30, stockQuantity: 160, sku: "ND-TP-100G" },
+        { weight: "250g Pack", price: 80, discountedPrice: 75, stockQuantity: 110, sku: "ND-TP-250G" },
+        { weight: "500g Pack", price: 150, discountedPrice: 140, stockQuantity: 75, sku: "ND-TP-500G" },
+        { weight: "1kg Bulk Pack", price: 260, discountedPrice: 240, stockQuantity: 55, sku: "ND-TP-1KG" },
+      ],
+    },
+    {
+      name: "Whole Coriander Seeds (Sabut Dhaniya)",
+      slug: "whole-coriander-seeds",
+      categoryId: catWhole.id,
+      origin: "Nagaur, Rajasthan",
+      description: "Sun-cured, machine cleaned, premium bold green coriander seeds with high volatile oil concentration. Perfect for roasting and fresh tempering.",
+      isFeatured: true,
+      inStock: true,
+      rating: 4.8,
+      numReviews: 94,
+      images: [
+        "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=800&q=80",
+      ],
+      variants: [
+        { weight: "100g Pack", price: 35, discountedPrice: 30, stockQuantity: 120, sku: "ND-CS-100G" },
+        { weight: "250g Pack", price: 75, discountedPrice: 70, stockQuantity: 80, sku: "ND-CS-250G" },
+        { weight: "500g Pack", price: 140, discountedPrice: 130, stockQuantity: 60, sku: "ND-CS-500G" },
+        { weight: "1kg Bulk Pack", price: 240, discountedPrice: 220, stockQuantity: 40, sku: "ND-CS-1KG" },
+      ],
+    },
+    {
+      name: "Alleppey Green Cardamom (8mm+ Extra Bold)",
+      slug: "alleppey-green-cardamom-jumbo",
+      categoryId: catWhole.id,
+      origin: "Idukki Hills, Kerala",
+      description: "Handpicked from mist-covered plantations at 3,500ft elevation. Graded at 8mm+ diameter, packed with dark resinous seeds overflowing with sweet herbal fragrance.",
+      isFeatured: true,
+      inStock: true,
+      rating: 4.9,
+      numReviews: 154,
+      images: [
+        "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=800&q=80",
+      ],
+      variants: [
+        { weight: "100g Glass Jar", price: 349, discountedPrice: 319, stockQuantity: 60, sku: "ND-CRD-100G" },
+        { weight: "250g Aroma Pack", price: 799, discountedPrice: 729, stockQuantity: 40, sku: "ND-CRD-250G" },
+        { weight: "500g Value Pack", price: 1499, discountedPrice: 1349, stockQuantity: 25, sku: "ND-CRD-500G" },
+      ],
+    },
+    {
+      name: "Tellicherry Black Pepper (Garbled Extra Bold)",
+      slug: "tellicherry-black-pepper-tgseb",
+      categoryId: catWhole.id,
+      origin: "Wayanad, Kerala",
+      description: "Sun-cured Tellicherry extra bold whole black peppercorns (TGSEB) with high natural piperine content.",
+      isFeatured: true,
+      inStock: true,
+      rating: 4.8,
+      numReviews: 118,
+      images: [
+        "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=800&q=80",
+      ],
+      variants: [
+        { weight: "100g Pack", price: 120, discountedPrice: 110, stockQuantity: 80, sku: "ND-BP-100G" },
+        { weight: "250g Pack", price: 280, discountedPrice: 260, stockQuantity: 50, sku: "ND-BP-250G" },
+        { weight: "500g Pack", price: 520, discountedPrice: 480, stockQuantity: 35, sku: "ND-BP-500G" },
+        { weight: "1kg Bulk Pack", price: 950, discountedPrice: 890, stockQuantity: 25, sku: "ND-BP-1KG" },
+      ],
+    },
+    {
+      name: "Royal Kashmiri Mongra Saffron (Grade A1)",
+      slug: "royal-kashmiri-mongra-saffron",
+      categoryId: catExotic.id,
+      origin: "Pampore, Kashmir",
+      description: "100% pure crimson stigmas harvested from the high plateaus of Pampore. Unbroken threads rich in safranal and crocin.",
+      isFeatured: true,
+      inStock: true,
+      rating: 5.0,
+      numReviews: 89,
+      images: [
+        "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
+      ],
+      variants: [
+        { weight: "1g Sealed Box", price: 420, discountedPrice: 380, stockQuantity: 100, sku: "ND-SAF-1G" },
+        { weight: "2g Sealed Box", price: 799, discountedPrice: 720, stockQuantity: 60, sku: "ND-SAF-2G" },
+        { weight: "5g Luxury Box", price: 1899, discountedPrice: 1699, stockQuantity: 30, sku: "ND-SAF-5G" },
+      ],
+    },
+    {
+      name: "Royal Heritage Garam Masala (18-Spice Blend)",
+      slug: "royal-heritage-garam-masala",
+      categoryId: catBlends.id,
+      origin: "Nagaur, Rajasthan",
+      description: "Authentic 18-spice slow-roasted artisanal garam masala. Balanced with stone-ground coriander, cardamom, cloves, cinnamon, mace, and cumin.",
+      isFeatured: true,
+      inStock: true,
+      rating: 4.9,
+      numReviews: 132,
+      images: [
+        "https://images.unsplash.com/photo-1532336414038-cf19250c5757?auto=format&fit=crop&w=800&q=80",
+      ],
+      variants: [
+        { weight: "100g Pack", price: 60, discountedPrice: 50, stockQuantity: 90, sku: "ND-GM-100G" },
+        { weight: "250g Pack", price: 140, discountedPrice: 125, stockQuantity: 65, sku: "ND-GM-250G" },
+        { weight: "500g Pack", price: 260, discountedPrice: 235, stockQuantity: 45, sku: "ND-GM-500G" },
+        { weight: "1kg Bulk Pack", price: 490, discountedPrice: 440, stockQuantity: 30, sku: "ND-GM-1KG" },
       ],
     },
   ];
 
-  for (const item of productsData) {
-    const { variants, ...prod } = item;
+  for (const p of productsData) {
+    const { variants, ...prodFields } = p;
     const createdProduct = await prisma.product.create({
-      data: prod,
+      data: {
+        ...prodFields,
+        variants: {
+          create: variants.map((v) => ({
+            weight: v.weight,
+            price: v.price as any,
+            discountedPrice: (v.discountedPrice || null) as any,
+            stockQuantity: v.stockQuantity,
+            sku: v.sku,
+          })),
+        },
+      },
     });
 
-    for (const v of variants) {
-      await prisma.productVariant.create({
-        data: {
-          ...v,
-          productId: createdProduct.id,
-        },
-      });
-    }
-
-    // Add a verified review
+    // Add sample approved review
     await prisma.review.create({
       data: {
         productId: createdProduct.id,
         userId: customer.id,
         rating: 5,
-        comment: `Outstanding freshness and aroma. The single-origin difference in this ${prod.name} is evident right away!`,
+        comment: `Excellent quality ${p.name}. The aroma and freshness are visibly superior to commercial market spices!`,
         isVerifiedPurchase: true,
         isApproved: true,
       },
     });
   }
 
-  // 8. Seed Sample Leads (CRM)
+  console.log(`📦 Seeded ${productsData.length} Products with Variants and Reviews`);
+
+  // 8. Seed B2B CRM Leads
   const lead1 = await prisma.lead.create({
     data: {
-      name: "Chef Rajesh Kapoor",
-      email: "rajesh@thegrandculinary.com",
-      phone: "+91 98200 44556",
-      company: "The Grand Heritage Bistro",
-      source: "Wholesale Contact Form",
+      name: "Ramesh Sharma (Wholesale Buyer)",
+      email: "ramesh.traders@gmail.com",
+      phone: "+91 98290 11223",
+      company: "Sharma Kirana & Spices Wholesale",
+      source: "IndiaMART Inquiry",
       status: LeadStatus.QUALIFIED,
-      spiceInterest: "Bulk Grade-A1 Saffron & 8mm Green Cardamom",
-      estimatedValue: 75000 as any,
+      spiceInterest: "Bulk Red Chilli Powder (100kg) & Coriander Powder (100kg)",
+      estimatedValue: 42000 as any,
       assignedToId: staff.id,
-    },
-  });
-
-  await prisma.leadNote.create({
-    data: {
-      leadId: lead1.id,
-      authorId: staff.id,
-      note: "Spoke with Executive Chef Rajesh. Requested sample batches of 100g Saffron and 500g Cardamom for kitchen testing.",
-    },
-  });
-
-  const lead2 = await prisma.lead.create({
-    data: {
-      name: "Pooja Singhania",
-      email: "pooja@artisanalteahouse.in",
-      phone: "+91 99100 88776",
-      company: "Artisanal Chai & Botanicals",
-      source: "WhatsApp Inquiry",
-      status: LeadStatus.NEW,
-      spiceInterest: "Tellicherry Black Pepper & Lakadong Turmeric",
-      estimatedValue: 32000 as any,
-      assignedToId: staff.id,
-    },
-  });
-
-  console.log("📋 Created sample CRM Leads & Notes");
-
-  // 9. Seed Sample Invoices (Billing)
-  const invoice1 = await prisma.invoice.create({
-    data: {
-      invoiceNumber: "INV-2024-001",
-      customerName: "The Grand Heritage Bistro (Attn: Chef Rajesh)",
-      customerEmail: "rajesh@thegrandculinary.com",
-      customerPhone: "+91 98200 44556",
-      billingAddress: "45 MG Road, Fort Heritage District, Mumbai, MH 400001",
-      subtotal: 50000 as any,
-      taxPercent: 5.0,
-      taxAmount: 2500 as any,
-      discountAmount: 2500 as any,
-      finalAmount: 50000 as any,
-      status: InvoiceStatus.ISSUED,
-      paymentMethod: "Bank Transfer (NEFT/RTGS)",
-      notes: "Commercial spice wholesale order - 30 days payment term.",
-      createdById: staff.id,
-      items: {
+      notes: {
         create: [
           {
-            description: "Kashmiri Mongra Saffron (Grade A1) - 50g Wholesale Pack",
-            quantity: 2,
-            unitPrice: 18000 as any,
-            totalPrice: 36000 as any,
-          },
-          {
-            description: "Alleppey Green Cardamom (8mm+ Jumbo Pods) - 5kg Bulk Pack",
-            quantity: 1,
-            unitPrice: 14000 as any,
-            totalPrice: 14000 as any,
+            note: "Inquired about bulk wholesale pricing for 100kg lot. Quoted ₹160/kg for Chilli and ₹130/kg for Dhaniya.",
+            authorId: staff.id,
           },
         ],
       },
     },
   });
 
-  console.log("🧾 Created sample Billing Invoice");
-
-  // 10. Seed Media Assets
-  await prisma.mediaAsset.createMany({
-    data: [
-      {
-        title: "Kashmiri Saffron Harvest",
-        url: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
-        type: MediaType.BANNER,
-        category: "banners",
+  const lead2 = await prisma.lead.create({
+    data: {
+      name: "Taj Heritage Catering",
+      email: "procurement@tajheritagehotels.com",
+      phone: "+91 98765 43210",
+      company: "Taj Heritage Group",
+      source: "Website Direct Inquiry",
+      status: LeadStatus.PROPOSAL_SENT,
+      spiceInterest: "Pure Turmeric Powder & Rajasthan Coriander Seeds",
+      estimatedValue: 65000 as any,
+      assignedToId: staff.id,
+      notes: {
+        create: [
+          {
+            note: "Samples of 250g turmeric and whole coriander dispatched via DTDC express.",
+            authorId: staff.id,
+          },
+        ],
       },
-      {
-        title: "Alleppey Green Cardamom Pods",
-        url: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=800&q=80",
-        type: MediaType.IMAGE,
-        category: "products",
-      },
-      {
-        title: "Artisanal Spice Mortar Hero",
-        url: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
-        type: MediaType.IMAGE,
-        category: "homepage",
-      },
-    ],
+    },
   });
 
-  // 11. Seed Coupons
-  await prisma.coupon.createMany({
-    data: [
-      {
-        code: "WELCOME10",
-        discountPercent: 10,
-        minOrderValue: 499,
-        maxDiscount: 150,
-        isActive: true,
-        usageLimit: 500,
+  console.log("💼 Seeded CRM B2B Leads");
+
+  // 9. Seed Commercial Invoices
+  await prisma.invoice.create({
+    data: {
+      invoiceNumber: "INV-2026-0001",
+      customerName: "Sharma Kirana & Spices Wholesale",
+      customerEmail: "ramesh.traders@gmail.com",
+      customerPhone: "+91 98290 11223",
+      billingAddress: "Shop 14, Grain Market, Didwana, Nagaur, Rajasthan",
+      subtotal: 34000 as any,
+      taxPercent: 5.0,
+      taxAmount: 1700 as any,
+      discountAmount: 1000 as any,
+      finalAmount: 34700 as any,
+      status: InvoiceStatus.PAID,
+      paymentMethod: "Bank Transfer (NEFT/RTGS)",
+      dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+      items: {
+        create: [
+          {
+            description: "Pure Red Chilli Powder (Bulk 100kg Lot)",
+            quantity: 100,
+            unitPrice: 160 as any,
+            totalPrice: 16000 as any,
+          },
+          {
+            description: "Pure Coriander Powder (Bulk 100kg Lot)",
+            quantity: 100,
+            unitPrice: 130 as any,
+            totalPrice: 13000 as any,
+          },
+          {
+            description: "Pure Turmeric Powder (25kg Bag)",
+            quantity: 25,
+            unitPrice: 200 as any,
+            totalPrice: 5000 as any,
+          },
+        ],
       },
-      {
-        code: "SPICEKING",
-        discountAmount: 150,
-        minOrderValue: 999,
-        isActive: true,
-        usageLimit: 200,
-      },
-      {
-        code: "FREESHIP",
-        discountAmount: 60,
-        minOrderValue: 299,
-        isActive: true,
-        usageLimit: 1000,
-      },
-    ],
+    },
   });
 
-  console.log("🎟️ Created active promotional coupons");
-  console.log("✨ ND Spices database seeding complete!");
+  console.log("🧾 Seeded B2B Commercial Invoices");
+
+  // 10. Seed Promotional Coupon
+  await prisma.coupon.create({
+    data: {
+      code: "WELCOME10",
+      discountPercent: 10.0,
+      minOrderValue: 299 as any,
+      maxDiscount: 150 as any,
+      isActive: true,
+      usageLimit: 1000,
+    },
+  });
+
+  // 11. Seed Audit Logs
+  await prisma.auditLog.create({
+    data: {
+      userId: superAdmin.id,
+      userName: superAdmin.name,
+      userEmail: superAdmin.email,
+      userRole: "SUPER_ADMIN",
+      action: "INITIAL_DATABASE_SYNC",
+      module: "CATALOG",
+      targetName: "Pure Rajasthan Spices Catalog",
+      newValue: { status: "Catalog synchronized with actual factory rates" },
+    },
+  });
+
+  console.log("✨ ND Spices database successfully populated with pure Rajasthan spice catalog!");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seed error:", e);
+    console.error("❌ Seed failed:", e);
     process.exit(1);
   })
   .finally(async () => {

@@ -41,12 +41,31 @@ export default async function HomePage() {
         bestseller: p.isFeatured,
         harvestDate: "Winter 2024",
         aromaProfile: "Rich, aromatic, intense",
-        images: p.images && p.images.length > 0 ? p.images : ["/spices/cardamom.jpg"],
+        images:
+          p.images && p.images.length > 0
+            ? p.images.map((imgUrl, i) => ({
+                id: `${p.id}-${i}`,
+                url: imgUrl,
+                alt: p.name,
+                isPrimary: i === 0,
+                order: i + 1,
+              }))
+            : [
+                {
+                  id: `${p.id}-default`,
+                  url: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d",
+                  alt: p.name,
+                  isPrimary: true,
+                  order: 1,
+                },
+              ],
         variants: p.variants.map((v) => ({
           id: v.id,
-          size: v.weight,
+          productId: p.id,
+          weight: v.weight,
+          weightGrams: parseInt(v.weight) || 100,
           price: Number(v.price),
-          discountPrice: v.discountedPrice ? Number(v.discountedPrice) : undefined,
+          mrp: v.discountedPrice ? Number(v.discountedPrice) : Math.round(Number(v.price) * 1.2),
           stock: v.stockQuantity,
           sku: v.sku,
         })),
