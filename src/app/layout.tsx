@@ -39,6 +39,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { AuthProvider } from "@/components/providers/AuthProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -47,10 +49,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jakarta.variable} ${playfair.variable}`}>
       <body className="min-h-screen flex flex-col antialiased bg-[#FAF7F2] text-spice-dark selection:bg-primary-200 selection:text-primary-900">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <CartDrawer />
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <CartDrawer />
+        </AuthProvider>
       </body>
     </html>
   );

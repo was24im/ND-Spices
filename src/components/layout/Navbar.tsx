@@ -1,19 +1,48 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingBag, Heart, Search, Menu, X, Sparkles, User } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import {
+  ShoppingBag,
+  Heart,
+  Search,
+  Menu,
+  X,
+  Sparkles,
+  User as UserIcon,
+  LogOut,
+  ShieldCheck,
+  Package,
+} from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { AnnouncementBar } from "./AnnouncementBar";
 
 export function Navbar() {
+  const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { toggleDrawer, getTotalItems, getSubtotal } = useCartStore();
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+
+  const { toggleDrawer, getTotalItems } = useCartStore();
   const { getTotalItems: getWishlistCount } = useWishlistStore();
 
   const totalCartCount = getTotalItems();
   const totalWishlistCount = getWishlistCount();
+
+  const role = (session?.user as any)?.role || "USER";
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(e.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const navLinks = [
     { name: "All Spices", href: "/products" },
@@ -71,7 +100,7 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3.5">
             {/* Search */}
             <Link
               href="/products"
@@ -94,6 +123,81 @@ export function Navbar() {
                 </span>
               )}
             </Link>
+
+            {/* User Auth Dropdown */}
+            <div className="relative" ref={userDropdownRef}>
+              {session?.user ? (
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center gap-1.5 p-1 rounded-full hover:bg-cream-200 transition-colors"
+                  aria-label="User menu"
+                >
+                  <div className="h-8 w-8 rounded-full bg-primary-100 text-primary-800 flex items-center justify-center font-bold text-xs border border-primary-300">
+                    {session.user.name ? session.user.name[0].toUpperCase() : "U"}
+                  </div>
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center gap-1.5 rounded-full border border-cream-300 bg-white hover:bg-cream-100 px-3 py-1.5 text-xs font-bold text-spice-dark transition-all shadow-xs"
+                >
+                  <UserIcon className="h-3.5 w-3.5 text-primary" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </Link>
+              )}
+
+              {/* User Dropdown Menu */}
+              {userDropdownOpen && session?.user && (
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-cream-300 bg-white p-2 shadow-spice-md animate-in fade-in zoom-in-95 duration-150 z-50">
+                  <div className="border-b border-cream-200 px-3 py-2">
+                    <p className="text-xs font-bold text-spice-dark truncate font-serif">
+                      {session.user.name || "Spice Member"}
+                    </p>
+                    <p className="text-[11px] text-spice-muted truncate">{session.user.email}</p>
+                    <span className={`inline-block mt-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                      role === "ADMIN" ? "bg-turmeric-100 text-turmeric-800" : "bg-secondary-100 text-secondary-800"
+                    }`}>
+                      {role === "ADMIN" ? "👑 Admin" : "🌿 Customer"}
+                    </span>
+                  </div>
+
+                  <div className="py-1 space-y-0.5 text-xs">
+                    <Link
+                      href="/account"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium text-spice-dark hover:bg-cream-100 transition-colors"
+                    >
+                      <UserIcon className="h-4 w-4 text-spice-muted" />
+                      <span>My Profile & Addresses</span>
+                    </Link>
+
+                    {role === "ADMIN" && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium text-spice-dark hover:bg-cream-100 transition-colors"
+                      >
+                        <ShieldCheck className="h-4 w-4 text-primary" />
+                        <span className="font-bold text-primary">Admin Dashboard</span>
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="border-t border-cream-200 pt-1">
+                    <button
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        signOut({ callbackUrl: "/login" });
+                      }}
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-50 transition-colors"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Cart Trigger */}
             <button
@@ -131,7 +235,23 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-2 flex items-center justify-between text-xs text-spice-muted">
-            <span>🌿 100% Farm Sourced & Lab Certified</span>
+            {session?.user ? (
+              <Link
+                href="/account"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-bold text-primary"
+              >
+                Go to Account ({session.user.name})
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-bold text-primary"
+              >
+                Sign In to Your Account
+              </Link>
+            )}
           </div>
         </div>
       )}
