@@ -2,40 +2,40 @@
 @config "../../tailwind.config.ts";
 
 :root {
-  --background: 40 33% 97%; /* #FAF7F2 warm cream */
-  --foreground: 24 45% 8%;   /* #1C110A dark roast */
+  --background: 40 43% 98%;   /* #FDFBF7 Warm Cream */
+  --foreground: 0 0% 12%;     /* #1E1E1E Dark Charcoal */
 
   --card: 0 0% 100%;
-  --card-foreground: 24 45% 8%;
+  --card-foreground: 0 0% 12%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 24 45% 8%;
+  --popover-foreground: 0 0% 12%;
 
-  --primary: 23 71% 50%;     /* #D96B27 warm saffron */
+  --primary: 6 64% 30%;       /* #7B241C Deep Cinnamon */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 153 40% 30%;  /* #2D6A4F cardamom green */
+  --secondary: 145 63% 27%;   /* #196F3D Cardamom Emerald */
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 36 25% 91%;       /* #EFE8D8 */
-  --muted-foreground: 24 9% 43%; /* #756A63 */
+  --muted: 40 25% 94%;        /* #F4ECE0 */
+  --muted-foreground: 0 0% 45%;
 
-  --accent: 355 61% 27%;     /* #6F1D1B cinnamon brown */
-  --accent-foreground: 0 0% 100%;
+  --accent: 48 89% 44%;       /* #D4AC0D Golden Turmeric */
+  --accent-foreground: 0 0% 12%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 38 24% 88%;      /* #EDE0D4 */
-  --input: 38 24% 88%;
-  --ring: 23 71% 50%;
+  --border: 38 30% 90%;       /* #EADDCB */
+  --input: 38 30% 90%;
+  --ring: 6 64% 30%;
 
-  --radius: 0.75rem;
+  --radius: 0.85rem;
 }
 
 body {
-  color: #1C110A;
-  background: #FAF7F2;
+  color: #1E1E1E;
+  background-color: #FDFBF7;
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -43,32 +43,32 @@ body {
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAF7F2;
+  background: #FDFBF7;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4C5B9;
+  background: #DCCAB1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B39D8B;
+  background: #B8A285;
 }
 
 /* Glassmorphism helpers */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(253, 251, 247, 0.90);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(237, 224, 212, 0.8);
+  border: 1px solid rgba(234, 221, 203, 0.85);
 }
 
-.spice-gold-text {
-  background: linear-gradient(135deg, #D96B27 0%, #E9A820 100%);
+.gold-accent-text {
+  background: linear-gradient(135deg, #D4AC0D 0%, #B5930B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

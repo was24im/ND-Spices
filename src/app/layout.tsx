@@ -40,6 +40,7 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 
 export default function RootLayout({
   children,
@@ -48,12 +49,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jakarta.variable} ${playfair.variable}`}>
-      <body className="min-h-screen flex flex-col antialiased bg-[#FAF7F2] text-spice-dark selection:bg-primary-200 selection:text-primary-900">
+      <body className="min-h-screen flex flex-col antialiased bg-[#FDFBF7] text-charcoal selection:bg-cinnamon-200 selection:text-cinnamon-900 pb-16 lg:pb-0">
         <AuthProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
           <CartDrawer />
+          <MobileBottomNav />
         </AuthProvider>
       </body>
     </html>
