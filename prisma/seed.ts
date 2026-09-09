@@ -1,10 +1,10 @@
-import { PrismaClient, Role, OrderStatus, PaymentMethod, PaymentStatus, LeadStatus, InvoiceStatus, MediaType } from "@prisma/client";
+import { PrismaClient, Role, MediaType } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌿 Starting ND Spices database seed...");
+  console.log("🌿 Starting clean ND Spices database seed (no dummy/mock data)...");
 
   // 1. Clean existing records in reverse dependency order
   await prisma.leadNote.deleteMany().catch(() => {});
@@ -28,10 +28,9 @@ async function main() {
   await prisma.coupon.deleteMany().catch(() => {});
   await prisma.user.deleteMany().catch(() => {});
 
-  // 2. Seed Users: Super Admin, Staff, and Customer
+  // 2. Seed Only Essential Backend Admin & Staff Accounts
   const superAdminPasswordHash = await bcrypt.hash("supersecretadminpassword", 10);
   const staffPasswordHash = await bcrypt.hash("Staff@1234", 10);
-  const userPasswordHash = await bcrypt.hash("Customer@1234", 10);
 
   const superAdmin = await prisma.user.create({
     data: {
@@ -53,17 +52,7 @@ async function main() {
     },
   });
 
-  const customer = await prisma.user.create({
-    data: {
-      name: "Aarav Sharma",
-      email: "customer@ndspices.com",
-      passwordHash: userPasswordHash,
-      role: Role.CUSTOMER,
-      phone: "+91 98765 43210",
-    },
-  });
-
-  console.log("👤 Created Super Admin, Staff, and Customer users");
+  console.log("👤 Initialized Super Admin and Staff accounts");
 
   // 3. Seed Default Website Settings & Theme Settings
   await prisma.websiteSettings.create({
@@ -151,22 +140,7 @@ async function main() {
 
   console.log("🎨 Created Website Settings, Theme, and CMS Content");
 
-  // 5. Seed Addresses
-  const address = await prisma.address.create({
-    data: {
-      userId: customer.id,
-      fullName: "Aarav Sharma",
-      street: "Flat 402, Royal Palms Residency, 12th Main Road, Indiranagar",
-      city: "Bengaluru",
-      state: "Karnataka",
-      postalCode: "560038",
-      country: "India",
-      phone: "+91 98765 43210",
-      isDefault: true,
-    },
-  });
-
-  // 6. Seed Categories
+  // 5. Seed Real Product Categories
   const catGround = await prisma.category.create({
     data: {
       name: "Pure Ground Powders",
@@ -180,8 +154,8 @@ async function main() {
     data: {
       name: "Whole Spices & Seeds",
       slug: "whole-spices",
-      description: "Machine-cleaned Coriander Seeds, Tellicherry Black Pepper, and Extra Bold Green Cardamom.",
-      image: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
+      description: "Sun-cured Rajasthan whole coriander seeds, Wayanad Tellicherry black pepper, and high-elevation green cardamom.",
+      image: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=800&q=80",
     },
   });
 
@@ -194,8 +168,7 @@ async function main() {
     },
   });
 
-
-  // 7. Seed Products and Variants
+  // 6. Seed Actual Spice Catalog (with 0 fake reviews and clean ratings)
   const productsData = [
     {
       name: "Pure Red Chilli Powder (Lal Mirch Powder)",
@@ -205,8 +178,8 @@ async function main() {
       description: "Finely ground from selected stemless sun-dried red chillies of Rajasthan. Delivers an authentic vibrant red color and natural fiery warmth without any artificial color enhancers or fillers.",
       isFeatured: true,
       inStock: true,
-      rating: 4.9,
-      numReviews: 186,
+      rating: 0,
+      numReviews: 0,
       images: [
         "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80",
       ],
@@ -225,8 +198,8 @@ async function main() {
       description: "Stone-ground from high-grade green coriander seeds of Rajasthan. Carefully cleaned and milled at gentle low temperatures to preserve natural volatile essential oils.",
       isFeatured: true,
       inStock: true,
-      rating: 4.8,
-      numReviews: 142,
+      rating: 0,
+      numReviews: 0,
       images: [
         "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
       ],
@@ -245,8 +218,8 @@ async function main() {
       description: "Finely milled pure golden turmeric rhizomes containing high natural curcumin levels. Zero lead chromate, chalk, or chemical coloring.",
       isFeatured: true,
       inStock: true,
-      rating: 4.9,
-      numReviews: 168,
+      rating: 0,
+      numReviews: 0,
       images: [
         "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
       ],
@@ -265,8 +238,8 @@ async function main() {
       description: "Sun-cured, machine cleaned, premium bold green coriander seeds with high volatile oil concentration. Perfect for roasting and fresh tempering.",
       isFeatured: true,
       inStock: true,
-      rating: 4.8,
-      numReviews: 94,
+      rating: 0,
+      numReviews: 0,
       images: [
         "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=800&q=80",
       ],
@@ -285,8 +258,8 @@ async function main() {
       description: "Handpicked from mist-covered plantations at 3,500ft elevation. Graded at 8mm+ diameter, packed with dark resinous seeds overflowing with sweet herbal fragrance.",
       isFeatured: true,
       inStock: true,
-      rating: 4.9,
-      numReviews: 154,
+      rating: 0,
+      numReviews: 0,
       images: [
         "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=800&q=80",
       ],
@@ -304,8 +277,8 @@ async function main() {
       description: "Sun-cured Tellicherry extra bold whole black peppercorns (TGSEB) with high natural piperine content.",
       isFeatured: true,
       inStock: true,
-      rating: 4.8,
-      numReviews: 118,
+      rating: 0,
+      numReviews: 0,
       images: [
         "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=800&q=80",
       ],
@@ -324,8 +297,8 @@ async function main() {
       description: "Authentic 18-spice slow-roasted artisanal garam masala. Balanced with stone-ground coriander, cardamom, cloves, cinnamon, mace, and cumin.",
       isFeatured: true,
       inStock: true,
-      rating: 4.9,
-      numReviews: 132,
+      rating: 0,
+      numReviews: 0,
       images: [
         "https://images.unsplash.com/photo-1532336414038-cf19250c5757?auto=format&fit=crop&w=800&q=80",
       ],
@@ -340,7 +313,7 @@ async function main() {
 
   for (const p of productsData) {
     const { variants, ...prodFields } = p;
-    const createdProduct = await prisma.product.create({
+    await prisma.product.create({
       data: {
         ...prodFields,
         variants: {
@@ -354,113 +327,11 @@ async function main() {
         },
       },
     });
-
-    // Add sample approved review
-    await prisma.review.create({
-      data: {
-        productId: createdProduct.id,
-        userId: customer.id,
-        rating: 5,
-        comment: `Excellent quality ${p.name}. The aroma and freshness are visibly superior to commercial market spices!`,
-        isVerifiedPurchase: true,
-        isApproved: true,
-      },
-    });
   }
 
-  console.log(`📦 Seeded ${productsData.length} Products with Variants and Reviews`);
+  console.log(`📦 Seeded ${productsData.length} Real Catalog Products`);
 
-  // 8. Seed B2B CRM Leads
-  const lead1 = await prisma.lead.create({
-    data: {
-      name: "Ramesh Sharma (Wholesale Buyer)",
-      email: "ramesh.traders@gmail.com",
-      phone: "+91 98290 11223",
-      company: "Sharma Kirana & Spices Wholesale",
-      source: "IndiaMART Inquiry",
-      status: LeadStatus.QUALIFIED,
-      spiceInterest: "Bulk Red Chilli Powder (100kg) & Coriander Powder (100kg)",
-      estimatedValue: 42000 as any,
-      assignedToId: staff.id,
-      notes: {
-        create: [
-          {
-            note: "Inquired about bulk wholesale pricing for 100kg lot. Quoted ₹160/kg for Chilli and ₹130/kg for Dhaniya.",
-            authorId: staff.id,
-          },
-        ],
-      },
-    },
-  });
-
-  const lead2 = await prisma.lead.create({
-    data: {
-      name: "Taj Heritage Catering",
-      email: "procurement@tajheritagehotels.com",
-      phone: "+91 98765 43210",
-      company: "Taj Heritage Group",
-      source: "Website Direct Inquiry",
-      status: LeadStatus.PROPOSAL_SENT,
-      spiceInterest: "Pure Turmeric Powder & Rajasthan Coriander Seeds",
-      estimatedValue: 65000 as any,
-      assignedToId: staff.id,
-      notes: {
-        create: [
-          {
-            note: "Samples of 250g turmeric and whole coriander dispatched via DTDC express.",
-            authorId: staff.id,
-          },
-        ],
-      },
-    },
-  });
-
-  console.log("💼 Seeded CRM B2B Leads");
-
-  // 9. Seed Commercial Invoices
-  await prisma.invoice.create({
-    data: {
-      invoiceNumber: "INV-2026-0001",
-      customerName: "Sharma Kirana & Spices Wholesale",
-      customerEmail: "ramesh.traders@gmail.com",
-      customerPhone: "+91 98290 11223",
-      billingAddress: "Shop 14, Grain Market, Didwana, Nagaur, Rajasthan",
-      subtotal: 34000 as any,
-      taxPercent: 5.0,
-      taxAmount: 1700 as any,
-      discountAmount: 1000 as any,
-      finalAmount: 34700 as any,
-      status: InvoiceStatus.PAID,
-      paymentMethod: "Bank Transfer (NEFT/RTGS)",
-      dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
-      items: {
-        create: [
-          {
-            description: "Pure Red Chilli Powder (Bulk 100kg Lot)",
-            quantity: 100,
-            unitPrice: 160 as any,
-            totalPrice: 16000 as any,
-          },
-          {
-            description: "Pure Coriander Powder (Bulk 100kg Lot)",
-            quantity: 100,
-            unitPrice: 130 as any,
-            totalPrice: 13000 as any,
-          },
-          {
-            description: "Pure Turmeric Powder (25kg Bag)",
-            quantity: 25,
-            unitPrice: 200 as any,
-            totalPrice: 5000 as any,
-          },
-        ],
-      },
-    },
-  });
-
-  console.log("🧾 Seeded B2B Commercial Invoices");
-
-  // 10. Seed Promotional Coupon
+  // 7. Seed Real Promotional Coupon
   await prisma.coupon.create({
     data: {
       code: "WELCOME10",
@@ -472,21 +343,7 @@ async function main() {
     },
   });
 
-  // 11. Seed Audit Logs
-  await prisma.auditLog.create({
-    data: {
-      userId: superAdmin.id,
-      userName: superAdmin.name,
-      userEmail: superAdmin.email,
-      userRole: "SUPER_ADMIN",
-      action: "INITIAL_DATABASE_SYNC",
-      module: "CATALOG",
-      targetName: "Pure Rajasthan Spices Catalog",
-      newValue: { status: "Catalog synchronized with actual factory rates" },
-    },
-  });
-
-  console.log("✨ ND Spices database successfully populated with pure Rajasthan spice catalog!");
+  console.log("✨ ND Spices database clean seed complete: 0 dummy leads, 0 dummy invoices, 0 dummy reviews!");
 }
 
 main()

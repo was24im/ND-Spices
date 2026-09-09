@@ -83,9 +83,8 @@ export default async function AdminOverviewPage() {
     console.error("Admin dashboard load error:", error);
   }
 
-  // If newly seeded database with 0 completed orders yet, give baseline display metric
-  const displayRevenue = totalRevenue > 0 ? totalRevenue : 48920;
-  const displayOrdersCount = totalOrdersCount > 0 ? totalOrdersCount : 28;
+  const displayRevenue = totalRevenue;
+  const displayOrdersCount = totalOrdersCount;
 
   return (
     <div className="p-4 sm:p-8 space-y-8">
