@@ -82,6 +82,13 @@ const config: Config = {
           800: "#0A0A0A",
           900: "#000000",
         },
+        spice: {
+          DEFAULT: "#7B241C",
+          dark: "#14110F",
+          charcoal: "#1F1A17",
+          muted: "#6B7280",
+          light: "#FDFBF7",
+        },
         // Component-level tokens mapped to brand
         primary: {
           DEFAULT: "#7B241C", // Deep Cinnamon as primary CTA/accent
