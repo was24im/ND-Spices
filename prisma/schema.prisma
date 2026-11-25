@@ -108,9 +108,11 @@ model Address {
 model Category {
   id          String    @id @default(cuid())
   name        String    @unique
+  nameHi      String?
   slug        String    @unique
   image       String?
   description String?   @db.Text
+  descriptionHi String? @db.Text
   displayOrder Int      @default(0)
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
@@ -124,11 +126,14 @@ model Category {
 model Product {
   id          String         @id @default(cuid())
   name        String
+  nameHi      String?
   slug        String         @unique
   description String         @db.Text
+  descriptionHi String?      @db.Text
   categoryId  String
   images      String[]       // PostgreSQL native text array
   origin      String         // e.g. "Idukki Hills, Kerala", "Pampore, Kashmir"
+  originHi    String?
   isFeatured  Boolean        @default(false)
   inStock     Boolean        @default(true)
   isVisible   Boolean        @default(true)

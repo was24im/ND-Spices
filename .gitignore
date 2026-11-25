@@ -30,6 +30,7 @@ yarn-error.log*
 
 # Next.js agent files
 next-env.d.ts
+*.tsbuildinfo
 
 # OS metadata
 .DS_Store

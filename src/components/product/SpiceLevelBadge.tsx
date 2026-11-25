@@ -13,33 +13,16 @@ export function SpiceLevelBadge({ level, className, showText = true }: SpiceLeve
   if (level === "NONE") return null;
 
   const config = {
-    MILD: {
-      flames: 1,
-      text: "Mild Heat",
-      color: "text-amber-600 bg-amber-50 border-amber-200",
-    },
-    MEDIUM: {
-      flames: 2,
-      text: "Medium Spicy",
-      color: "text-orange-600 bg-orange-50 border-orange-200",
-    },
-    HOT: {
-      flames: 3,
-      text: "Pungent & Hot",
-      color: "text-red-600 bg-red-50 border-red-200",
-    },
-    EXTRA_HOT: {
-      flames: 4,
-      text: "Fiery Extra Hot",
-      color: "text-rose-700 bg-rose-50 border-rose-300 font-bold",
-    },
+    MILD: { flames: 1, text: "Mild Heat" },
+    MEDIUM: { flames: 2, text: "Medium Spicy" },
+    HOT: { flames: 3, text: "Pungent & Hot" },
+    EXTRA_HOT: { flames: 4, text: "Fiery Extra Hot" },
   }[level];
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border",
-        config.color,
+        "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs border border-[#E8E1DD] bg-[#FAF8F6] text-[#3D1E16]",
         className
       )}
       title={config.text}

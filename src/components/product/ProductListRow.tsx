@@ -3,19 +3,19 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, ShoppingBag, Check, MapPin, Sparkles, Star } from "lucide-react";
+import { Heart, ShoppingBag, Check } from "lucide-react";
 import { ProductType } from "@/types";
-import { formatPrice, calculateDiscount } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
-import { SpiceLevelBadge } from "./SpiceLevelBadge";
-import { Badge } from "../ui/Badge";
+import { useTranslation } from "@/store/useLanguageStore";
 
 interface ProductListRowProps {
   product: ProductType;
 }
 
 export function ProductListRow({ product }: ProductListRowProps) {
+  const { isHindi, t } = useTranslation();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [addedAnimation, setAddedAnimation] = useState(false);
 
@@ -23,15 +23,19 @@ export function ProductListRow({ product }: ProductListRowProps) {
   const { isInWishlist, toggleWishlist } = useWishlistStore();
 
   const activeVariant = product.variants[selectedVariantIndex] || product.variants[0];
-  const primaryImage = product.images[0]?.url || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d";
+  const primaryImage = product.images[0]?.url || "/images/categories/whole-red-chilli.jpg";
   const isWishlisted = isInWishlist(product.id);
-  const discountPercent = calculateDiscount(activeVariant.price, activeVariant.mrp);
+
+  const displayName = isHindi && (product as any).nameHi ? (product as any).nameHi : product.name;
+  const displayDesc = isHindi && (product as any).descriptionHi ? (product as any).descriptionHi : product.description;
+  const displayOrigin = isHindi && (product as any).originHi ? (product as any).originHi : product.origin;
 
   const handleAddToCart = () => {
     addItem({
       productId: product.id,
       variantId: activeVariant.id,
       name: product.name,
+      nameHi: (product as any).nameHi || product.name,
       slug: product.slug,
       weight: activeVariant.weight,
       weightGrams: activeVariant.weightGrams,
@@ -39,6 +43,7 @@ export function ProductListRow({ product }: ProductListRowProps) {
       mrp: activeVariant.mrp,
       image: primaryImage,
       origin: product.origin,
+      originHi: (product as any).originHi || product.origin,
     });
 
     setAddedAnimation(true);
@@ -46,75 +51,41 @@ export function ProductListRow({ product }: ProductListRowProps) {
   };
 
   return (
-    <div className="group flex flex-col sm:flex-row gap-4 sm:gap-6 rounded-2xl border border-cream-300 bg-white p-4 sm:p-5 shadow-spice-sm hover:shadow-spice-md transition-all duration-200">
-      {/* Thumbnail */}
-      <div className="relative aspect-square sm:h-44 sm:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-cream-100">
+    <div className="flex flex-col sm:flex-row gap-5 rounded-xl border border-[#E8E1DD] bg-white p-4 transition-colors hover:border-[#3D1E16]/50">
+      <div className="relative aspect-square sm:h-40 sm:w-40 flex-shrink-0 overflow-hidden rounded-lg bg-[#FAF8F6]">
         <Link href={`/products/${product.slug}`} className="block h-full w-full">
-          <Image
-            src={primaryImage}
-            alt={product.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          <Image src={primaryImage} alt={displayName} fill className="object-cover" />
         </Link>
         <button
+          type="button"
           onClick={() => toggleWishlist(product)}
-          className="absolute top-2.5 right-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-md"
+          className="absolute top-2 right-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-white/95 border border-[#E8E1DD]"
           aria-label="Wishlist"
         >
-          <Heart
-            className={`h-4 w-4 ${isWishlisted ? "fill-cinnamon text-cinnamon" : "text-muted-foreground"}`}
-          />
+          <Heart className={`h-3.5 w-3.5 ${isWishlisted ? "fill-[#3D1E16] text-[#3D1E16]" : "text-[#6E5A54]"}`} />
         </button>
       </div>
 
-      {/* Main Details */}
-      <div className="flex flex-1 flex-col justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3 text-cinnamon" />
-              {product.origin}
-            </span>
-            <SpiceLevelBadge level={product.spiceLevel} />
-            {product.organic && (
-              <span className="text-[10px] font-bold text-cardamom bg-cardamom-50 border border-cardamom-200 px-2 py-0.5 rounded-full">
-                100% Organic
-              </span>
-            )}
-          </div>
-
+      <div className="flex flex-1 flex-col justify-between space-y-3">
+        <div className="space-y-1.5">
+          <p className="text-xs text-[#6E5A54]">{displayOrigin}</p>
           <Link href={`/products/${product.slug}`}>
-            <h3 className="font-serif text-lg sm:text-xl font-bold text-charcoal hover:text-cinnamon transition-colors">
-              {product.name}
+            <h3 className="font-serif text-lg font-semibold text-[#2B140E] hover:underline underline-offset-4">
+              {displayName}
             </h3>
           </Link>
+          <p className="text-xs text-[#6E5A54] line-clamp-2 leading-relaxed">{displayDesc}</p>
 
-          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-            {product.description}
-          </p>
-
-          {/* Rating */}
-          <div className="flex items-center gap-2">
-            <div className="flex text-turmeric">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-3.5 w-3.5 fill-current" />
-              ))}
-            </div>
-            <span className="text-xs font-bold text-charcoal">{product.rating || 4.9}</span>
-            <span className="text-xs text-muted-foreground">({product.reviewCount || 95} reviews)</span>
-          </div>
-
-          {/* Weight options */}
           <div className="flex flex-wrap gap-1.5 pt-1">
             {product.variants.map((v, idx) => (
               <button
                 key={v.id}
+                type="button"
                 onClick={() => setSelectedVariantIndex(idx)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
+                className={`rounded-md px-2.5 py-1 text-xs font-medium border transition-colors ${
                   selectedVariantIndex === idx
-                    ? "bg-cardamom text-white"
-                    : "bg-cream-200 text-charcoal hover:bg-cream-300"
+                    ? "bg-[#3D1E16] text-white border-[#3D1E16]"
+                    : "bg-white text-[#2B140E] border-[#E8E1DD] hover:bg-[#FAF8F6]"
                 }`}
               >
                 {v.weight}
@@ -123,39 +94,28 @@ export function ProductListRow({ product }: ProductListRowProps) {
           </div>
         </div>
 
-        {/* Price & Action Row */}
-        <div className="flex items-center justify-between pt-4 mt-3 border-t border-cream-200">
+        <div className="flex items-center justify-between pt-3 border-t border-[#E8E1DD]">
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-2xl font-black text-charcoal">
-              {formatPrice(activeVariant.price)}
-            </span>
+            <span className="text-lg font-bold text-[#2B140E]">{formatPrice(activeVariant.price)}</span>
             {activeVariant.mrp > activeVariant.price && (
-              <span className="text-xs text-muted-foreground line-through">
-                {formatPrice(activeVariant.mrp)}
-              </span>
-            )}
-            {discountPercent > 0 && (
-              <span className="rounded-full bg-cinnamon text-white text-[10px] font-bold px-2 py-0.5">
-                Save {discountPercent}%
-              </span>
+              <span className="text-xs text-[#6E5A54] line-through">{formatPrice(activeVariant.mrp)}</span>
             )}
           </div>
 
           <button
+            type="button"
             onClick={handleAddToCart}
-            className={`flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-bold text-white transition-all shadow-spice-sm ${
-              addedAnimation ? "bg-cardamom" : "bg-primary hover:bg-cinnamon-600"
-            }`}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#3D1E16] hover:bg-[#2B140E] px-4 py-2 text-xs font-medium text-white transition-colors"
           >
             {addedAnimation ? (
               <>
-                <Check className="h-4 w-4" />
-                <span>Added!</span>
+                <Check className="h-3.5 w-3.5" />
+                <span>{isHindi ? "जोड़ा गया" : "Added"}</span>
               </>
             ) : (
               <>
-                <ShoppingBag className="h-4 w-4" />
-                <span>Add to Basket</span>
+                <ShoppingBag className="h-3.5 w-3.5" />
+                <span>{t("catalog.addToBasket")}</span>
               </>
             )}
           </button>

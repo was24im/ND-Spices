@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isSuperAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 const variantSchema = z.object({
@@ -16,10 +16,13 @@ const variantSchema = z.object({
 const productSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2),
+  nameHi: z.string().optional().nullable(),
   slug: z.string().min(2),
   description: z.string().min(10),
+  descriptionHi: z.string().optional().nullable(),
   categoryId: z.string().min(1),
   origin: z.string().min(2),
+  originHi: z.string().optional().nullable(),
   images: z.array(z.string()).min(1),
   isFeatured: z.boolean().default(false),
   inStock: z.boolean().default(true),
@@ -28,7 +31,7 @@ const productSchema = z.object({
 
 async function checkAdmin() {
   const session = await getServerSession(authOptions);
-  if (!session?.user || (session.user as any)?.role !== "ADMIN") {
+  if (!session?.user || !isSuperAdmin((session.user as any)?.role)) {
     return null;
   }
   return session.user;
@@ -77,17 +80,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, slug, description, categoryId, origin, images, isFeatured, inStock, variants } =
+    const { name, nameHi, slug, description, descriptionHi, categoryId, origin, originHi, images, isFeatured, inStock, variants } =
       validated.data;
 
     const newProduct = await prisma.$transaction(async (tx) => {
       const product = await tx.product.create({
         data: {
           name,
+          nameHi: nameHi || null,
           slug,
           description,
+          descriptionHi: descriptionHi || null,
           categoryId,
           origin,
+          originHi: originHi || null,
           images,
           isFeatured,
           inStock,
@@ -136,7 +142,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const { id, name, slug, description, categoryId, origin, images, isFeatured, inStock, variants } =
+    const { id, name, nameHi, slug, description, descriptionHi, categoryId, origin, originHi, images, isFeatured, inStock, variants } =
       validated.data;
 
     const updated = await prisma.$transaction(async (tx) => {
@@ -145,10 +151,13 @@ export async function PUT(request: Request) {
         where: { id },
         data: {
           name,
+          nameHi: nameHi || null,
           slug,
           description,
+          descriptionHi: descriptionHi || null,
           categoryId,
           origin,
+          originHi: originHi || null,
           images,
           isFeatured,
           inStock,

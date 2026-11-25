@@ -188,7 +188,7 @@ export default function AccountPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       {/* Header Profile Summary */}
-      <div className="rounded-3xl bg-gradient-to-r from-cinnamon-500 via-primary to-secondary p-6 sm:p-8 text-white shadow-spice-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="rounded-2xl bg-[#3D1E16] p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white font-serif font-bold text-2xl border border-white/30">
             {session?.user?.name ? session.user.name[0].toUpperCase() : "U"}

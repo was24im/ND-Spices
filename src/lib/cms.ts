@@ -2,67 +2,89 @@ import { prisma } from "@/lib/db";
 
 export interface HeroContent {
   badgeText: string;
+  badgeTextHi?: string;
   heading: string;
+  headingHi?: string;
   headingHighlight: string;
+  headingHighlightHi?: string;
   paragraph: string;
+  paragraphHi?: string;
   primaryButtonText: string;
+  primaryButtonTextHi?: string;
   primaryButtonLink: string;
   secondaryButtonText: string;
+  secondaryButtonTextHi?: string;
   secondaryButtonLink: string;
   heroImage: string;
   stat1Value: string;
   stat1Label: string;
+  stat1LabelHi?: string;
   stat2Value: string;
   stat2Label: string;
+  stat2LabelHi?: string;
   stat3Value: string;
   stat3Label: string;
+  stat3LabelHi?: string;
 }
 
 export interface StoryContent {
   title: string;
+  titleHi?: string;
   subtitle: string;
+  subtitleHi?: string;
   paragraph: string;
+  paragraphHi?: string;
   image: string;
 }
 
 export interface AnnouncementContent {
   marqueeText: string;
+  marqueeTextHi?: string;
 }
 
 export const DEFAULT_HERO: HeroContent = {
-  badgeText: "100% Pure Rajasthan Harvest • Stone-Ground & Lab Tested",
-  heading: "Single-Origin Pure Spices,",
-  headingHighlight: "Authentic Heritage Flavour.",
+  badgeText: "Direct From Rajasthan & Heritage Estates • Lab-Tested 100% Pure",
+  badgeTextHi: "राजस्थान व प्रमुख खेतों से सीधा • लैब प्रमाणित 100% शुद्ध",
+  heading: "Pure Indian Spices,",
+  headingHi: "शुद्ध भारतीय मसाले,",
+  headingHighlight: "Authentic Stone-Ground Purity.",
+  headingHighlightHi: "पारंपरिक पत्थर पिसाई का असली स्वाद।",
   paragraph:
-    "Direct from harvest estates and stone-ground mills in Nagaur, Rajasthan. Zero adulteration, zero artificial food coloring, and rich natural essential oils sealed at source.",
-  primaryButtonText: "Explore Pure Spices",
+    "Harvested from certified Indian spice farms and stone-ground at low temperatures. Free from artificial colors, chemical preservatives, fillers, and adulterants.",
+  paragraphHi:
+    "प्रमाणित भारतीय खेतों से सीधे खरीदे गए और धीमी गति से पत्थर से पिसे मसाले। कृत्रिम रंगों, रसायनों, मिलावट और स्टार्च से पूरी तरह मुक्त।",
+  primaryButtonText: "Shop Spice Varieties",
+  primaryButtonTextHi: "मसालों की किस्में देखें",
   primaryButtonLink: "/products",
-  secondaryButtonText: "Stone-Ground Powders",
-  secondaryButtonLink: "/products?category=ground-spices",
-  heroImage:
-    "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+  secondaryButtonText: "Explore Pure Powders",
+  secondaryButtonTextHi: "शुद्ध पिसे मसाले",
+  secondaryButtonLink: "/products?category=red-chilli-powder",
+  heroImage: "/images/hero/indian-spices-banner.jpg",
   stat1Value: "100%",
   stat1Label: "Pure & Unadulterated",
+  stat1LabelHi: "पूर्णतः शुद्ध व बिना मिलावट",
   stat2Value: "₹30+",
-  stat2Label: "Direct Factory Rates",
+  stat2Label: "Factory Direct Rates",
+  stat2LabelHi: "सीधे फैक्ट्री दरें",
   stat3Value: "0%",
   stat3Label: "Added Colors / Starch",
+  stat3LabelHi: "कृत्रिम रंग या स्टार्च",
 };
 
 export const DEFAULT_THEME = {
   id: "default-theme",
-  logoUrl: null as string | null,
-  faviconUrl: null as string | null,
-  primaryColor: "#7B241C",
-  secondaryColor: "#196F3D",
-  accentColor: "#D4AC0D",
-  backgroundColor: "#FDFBF7",
-  textColor: "#1E1E1E",
+  logoUrl: "/images/branding/logo.svg" as string | null,
+  faviconUrl: "/images/branding/logo-icon.svg" as string | null,
+  primaryColor: "#3D1E16", // Rich Cola
+  secondaryColor: "#562D22", // Warm Cola
+  accentColor: "#78483B", // Caramel Cola
+  backgroundColor: "#FFFFFF", // Crisp White
+  textColor: "#2B140E", // Deep Cola
   fontFamily: "Playfair Display",
-  borderRadius: "1.5rem",
-  buttonStyle: "pill",
+  borderRadius: "0.75rem",
+  buttonStyle: "rounded",
   heroBannerUrl:
-    "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=85",
+    "/images/hero/indian-spices-banner.jpg",
 };
 
 export const DEFAULT_SETTINGS = {

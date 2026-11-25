@@ -43,6 +43,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.jsdelivr.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'commons.wikimedia.org',
+      },
     ],
   },
 };

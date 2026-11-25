@@ -25,6 +25,7 @@ import {
   History,
   Sparkles,
   FileEdit,
+  FolderTree,
 } from "lucide-react";
 
 const NAV_GROUPS = [
@@ -43,7 +44,8 @@ const NAV_GROUPS = [
   {
     group: "Store Catalog & Stock",
     items: [
-      { href: "/admin/products", label: "Products & Variants", icon: Package },
+      { href: "/admin/products", label: "Products & Varieties", icon: Package },
+      { href: "/admin/categories", label: "Categories & Spice Lines", icon: FolderTree },
       { href: "/admin/inventory", label: "Live Stock Inventory", icon: Boxes },
     ],
   },

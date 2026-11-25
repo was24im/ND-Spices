@@ -13,23 +13,23 @@ import {
   ArrowRight,
   CheckCircle2,
   Lock,
-  Sparkles,
   Tag,
   Check,
   MapPin,
   X,
   AlertCircle,
-  Zap,
 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useToastStore } from "@/store/useToastStore";
+import { useTranslation } from "@/store/useLanguageStore";
 import { formatPrice } from "@/lib/utils";
 
 export default function CheckoutPage() {
   const { data: session } = useSession();
   const { items, getSubtotal, clearCart } = useCartStore();
+  const { isHindi, dict } = useTranslation();
 
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
   // Step 1: Address
   const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
@@ -108,13 +108,13 @@ export default function CheckoutPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setCouponError(data.error || "Invalid promo code");
+        setCouponError(data.error || (isHindi ? "अमान्य प्रोमो कोड" : "Invalid promo code"));
       } else {
         setAppliedCoupon(data.coupon);
         setCouponInput("");
       }
     } catch (e) {
-      setCouponError("Failed to validate coupon");
+      setCouponError(isHindi ? "कूपन सत्यापित करने में त्रुटि" : "Failed to validate coupon");
     } finally {
       setCouponLoading(false);
     }
@@ -149,19 +149,24 @@ export default function CheckoutPage() {
     if (!shippingPayload) {
       if (
         !addressForm.fullName ||
-        !addressForm.email ||
         !addressForm.phone ||
         !addressForm.street ||
         !addressForm.city ||
         !addressForm.postalCode
       ) {
-        addToast("Please fill in all shipping address fields.", "warning");
+        addToast(
+          isHindi
+            ? "कृपया डिलीवरी पते के सभी आवश्यक फ़ील्ड भरें"
+            : "Please fill in all required shipping address fields",
+          "error"
+        );
         setCurrentStep(1);
         return;
       }
+
       shippingPayload = {
         fullName: addressForm.fullName,
-        email: addressForm.email,
+        email: addressForm.email || session?.user?.email || "guest@ndspices.com",
         phone: addressForm.phone,
         street: addressForm.street,
         city: addressForm.city,
@@ -174,25 +179,29 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
+      const orderItems = items.map((i) => ({
+        productId: i.productId,
+        variantId: i.variantId,
+        quantity: i.quantity,
+        price: i.price,
+      }));
+
+      const payload = {
+        items: orderItems,
+        shippingAddress: shippingPayload,
+        paymentMethod,
+        deliveryOption,
+        couponCode: appliedCoupon?.code,
+        discountAmount,
+        subtotal,
+        shippingFee,
+        totalAmount: finalAmount,
+      };
+
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((item) => ({
-            productId: item.productId,
-            variantId: item.variantId,
-            name: item.name,
-            weight: item.weight,
-            price: item.price,
-            quantity: item.quantity,
-            image: item.image,
-          })),
-          shippingAddress: shippingPayload,
-          paymentMethod,
-          deliverySpeed: deliveryOption,
-          couponCode: appliedCoupon?.code || null,
-          discountAmount: discountAmount || 0,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -203,10 +212,18 @@ export default function CheckoutPage() {
 
       setOrderSuccess(data.orderNumber);
       clearCart();
-      addToast(`Order #${data.orderNumber} placed successfully!`, "success");
+      addToast(
+        isHindi
+          ? `ऑर्डर #${data.orderNumber} सफलतापूर्वक दर्ज हुआ!`
+          : `Order #${data.orderNumber} placed successfully!`,
+        "success"
+      );
     } catch (err: any) {
       console.error("Order error:", err);
-      addToast(err.message || "Failed to place order. Please try again.", "error");
+      addToast(
+        err.message || (isHindi ? "ऑर्डर दर्ज करने में त्रुटि" : "Failed to place order. Please try again."),
+        "error"
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -215,48 +232,61 @@ export default function CheckoutPage() {
   if (orderSuccess) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center space-y-6">
-        <div className="h-20 w-20 rounded-full bg-cardamom-100 text-cardamom flex items-center justify-center mx-auto">
+        <div className="h-20 w-20 rounded-full bg-secondary/10 text-secondary flex items-center justify-center mx-auto">
           <CheckCircle2 className="h-10 w-10" />
         </div>
         <div className="space-y-2">
-          <span className="rounded-full bg-cardamom-100 text-cardamom text-xs font-bold px-3 py-1">
-            Order Confirmed & Farm Sealed
+          <span className="rounded-full bg-secondary/10 text-secondary text-xs font-bold px-3 py-1">
+            {isHindi ? "ऑर्डर की पुष्टि हुई • ताज़ा पैक" : "Order Confirmed & Sealed"}
           </span>
-          <h1 className="font-serif text-3xl sm:text-4xl font-extrabold text-charcoal">
-            Thank you for choosing ND Spices!
+          <h1 className="font-serif text-3xl sm:text-4xl font-extrabold text-spice-dark">
+            {isHindi ? "एनडी स्पाइसेस चुनने के लिए धन्यवाद!" : "Thank you for choosing ND Spices!"}
           </h1>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Order <strong>#{orderSuccess}</strong> is placed. We are preparing fresh single-origin spices straight from Kerala and Kashmir.
+          <p className="text-sm text-spice-muted max-w-md mx-auto">
+            {isHindi ? (
+              <>ऑर्डर <strong>#{orderSuccess}</strong> दर्ज कर लिया गया है। हम आपके शुद्ध मसाले तैयार कर रहे हैं।</>
+            ) : (
+              <>Order <strong>#{orderSuccess}</strong> is placed. We are preparing your single-origin Indian spices.</>
+            )}
           </p>
         </div>
 
-        <div className="rounded-3xl border border-cream-300 bg-white p-6 text-left max-w-md mx-auto space-y-3 shadow-spice-sm">
-          <h3 className="font-serif text-sm font-bold text-charcoal border-b border-cream-200 pb-2">
-            Dispatch Details
+        <div className="rounded-3xl border border-cream-300 bg-white p-6 text-left max-w-md mx-auto space-y-3 shadow-sm">
+          <h3 className="font-serif text-sm font-bold text-spice-dark border-b border-cream-200 pb-2">
+            {isHindi ? "ऑर्डर विवरण" : "Dispatch Details"}
           </h3>
-          <p className="text-xs text-muted-foreground">
-            <strong>Payment Method:</strong> {paymentMethod === "RAZORPAY" ? "Razorpay Gateway (Online)" : "Cash on Delivery (COD)"}
+          <p className="text-xs text-spice-muted">
+            <strong>{isHindi ? "भुगतान विधि:" : "Payment Method:"}</strong>{" "}
+            {paymentMethod === "RAZORPAY"
+              ? isHindi
+                ? "ऑनलाइन भुगतान (Razorpay)"
+                : "Razorpay Gateway (Online)"
+              : isHindi
+              ? "कैश ऑन डिलीवरी (COD)"
+              : "Cash on Delivery (COD)"}
           </p>
-          <p className="text-xs text-muted-foreground">
-            <strong>Delivery Speed:</strong> {deliveryOption === "express" ? "Express Priority (24-48 hrs)" : "Standard Express (3-5 days)"}
+          <p className="text-xs text-spice-muted">
+            <strong>{isHindi ? "डिलीवरी प्रकार:" : "Delivery Speed:"}</strong>{" "}
+            {deliveryOption === "express"
+              ? isHindi
+                ? "प्राथमिकता एक्सप्रेस (24-48 घंटे)"
+                : "Express Priority (24-48 hrs)"
+              : isHindi
+              ? "मानक एक्सप्रेस (3-5 दिन)"
+              : "Standard Express (3-5 days)"}
           </p>
-          <p className="text-xs text-muted-foreground">
-            <strong>Total Paid:</strong> <span className="font-bold text-charcoal font-display">{formatPrice(finalAmount)}</span>
+          <p className="text-xs text-spice-muted">
+            <strong>{isHindi ? "कुल भुगतान:" : "Total Paid:"}</strong>{" "}
+            <span className="font-bold text-spice-dark font-display">{formatPrice(finalAmount)}</span>
           </p>
         </div>
 
         <div className="pt-4 flex flex-col sm:flex-row justify-center gap-3">
           <Link
-            href={`/orders/${orderSuccess}`}
-            className="rounded-xl bg-cardamom px-6 py-3 text-xs font-bold text-white hover:bg-cardamom-600 shadow-spice-sm transition-all"
-          >
-            Track Order & Download Invoice
-          </Link>
-          <Link
             href="/products"
-            className="rounded-xl border border-cinnamon text-cinnamon px-6 py-3 text-xs font-bold hover:bg-cinnamon/5 transition-all"
+            className="rounded-xl bg-primary px-6 py-3 text-xs font-bold text-white hover:bg-primary-dark shadow-sm transition-all"
           >
-            Continue Exploring Spices
+            {isHindi ? "और मसाले देखें" : "Continue Exploring Spices"}
           </Link>
         </div>
       </div>
@@ -266,15 +296,13 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="font-serif text-2xl font-bold text-charcoal">Your spice basket is empty</h2>
-        <p className="text-xs text-muted-foreground">
-          Add single-origin spice harvests to your basket before checking out.
-        </p>
+        <h2 className="font-serif text-2xl font-bold text-spice-dark">{dict.cart.emptyTitle}</h2>
+        <p className="text-xs text-spice-muted">{dict.cart.emptyDesc}</p>
         <Link
           href="/products"
-          className="inline-block rounded-xl bg-cinnamon px-6 py-3 text-xs font-bold text-white hover:bg-cinnamon-600 shadow-spice-sm"
+          className="inline-block rounded-xl bg-primary px-6 py-3 text-xs font-bold text-white hover:bg-primary-dark shadow-sm"
         >
-          Browse Spice Collections
+          {dict.cart.startShopping}
         </Link>
       </div>
     );
@@ -286,14 +314,14 @@ export default function CheckoutPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-cream-300 pb-6">
         <div>
           <Link
-            href="/products"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-cinnamon transition-colors mb-2"
+            href="/cart"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-spice-muted hover:text-primary transition-colors mb-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Return to Catalog</span>
+            <span>{isHindi ? "वापस टोकरी पर जाएं" : "Return to Basket"}</span>
           </Link>
-          <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-charcoal">
-            Express Checkout
+          <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-spice-dark">
+            {dict.checkout.title}
           </h1>
         </div>
 
@@ -303,31 +331,31 @@ export default function CheckoutPage() {
             onClick={() => setCurrentStep(1)}
             className={`flex items-center gap-1.5 rounded-full px-3 py-1 transition-all ${
               currentStep === 1
-                ? "bg-cinnamon text-white shadow-xs"
-                : "bg-cream-200 text-charcoal hover:bg-cream-300"
+                ? "bg-primary text-white shadow-xs"
+                : "bg-cream-200 text-spice-dark hover:bg-cream-300"
             }`}
           >
-            <span>1. Address</span>
+            <span>1. {isHindi ? "पता" : "Address"}</span>
           </button>
           <button
             onClick={() => setCurrentStep(2)}
             className={`flex items-center gap-1.5 rounded-full px-3 py-1 transition-all ${
               currentStep === 2
-                ? "bg-cinnamon text-white shadow-xs"
-                : "bg-cream-200 text-charcoal hover:bg-cream-300"
+                ? "bg-primary text-white shadow-xs"
+                : "bg-cream-200 text-spice-dark hover:bg-cream-300"
             }`}
           >
-            <span>2. Delivery</span>
+            <span>2. {isHindi ? "डिलीवरी" : "Delivery"}</span>
           </button>
           <button
             onClick={() => setCurrentStep(3)}
             className={`flex items-center gap-1.5 rounded-full px-3 py-1 transition-all ${
               currentStep === 3
-                ? "bg-cinnamon text-white shadow-xs"
-                : "bg-cream-200 text-charcoal hover:bg-cream-300"
+                ? "bg-primary text-white shadow-xs"
+                : "bg-cream-200 text-spice-dark hover:bg-cream-300"
             }`}
           >
-            <span>3. Payment</span>
+            <span>3. {isHindi ? "भुगतान" : "Payment"}</span>
           </button>
         </div>
       </div>
@@ -337,19 +365,19 @@ export default function CheckoutPage() {
         <div className="lg:col-span-7 space-y-6">
           {/* STEP 1: Delivery Address */}
           {currentStep === 1 && (
-            <div className="rounded-3xl border border-cream-300 bg-white p-6 sm:p-8 shadow-spice-sm space-y-5 animate-in fade-in duration-150">
+            <div className="rounded-3xl border border-cream-300 bg-white p-6 sm:p-8 shadow-sm space-y-5 animate-in fade-in duration-150">
               <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
-                <MapPin className="h-5 w-5 text-cinnamon" />
-                <h2 className="font-serif text-lg font-bold text-charcoal">
-                  1. Shipping & Delivery Address
+                <MapPin className="h-5 w-5 text-primary" />
+                <h2 className="font-serif text-lg font-bold text-spice-dark">
+                  1. {dict.checkout.shippingAddress}
                 </h2>
               </div>
 
               {/* Saved Address Selection */}
               {savedAddresses.length > 0 && (
                 <div className="space-y-3">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Choose Saved Address
+                  <label className="block text-xs font-bold uppercase tracking-wider text-spice-muted">
+                    {isHindi ? "सहेजे गए पते चुनें" : "Choose Saved Address"}
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {savedAddresses.map((addr) => (
@@ -357,7 +385,7 @@ export default function CheckoutPage() {
                         key={addr.id}
                         className={`rounded-2xl border p-4 cursor-pointer transition-all ${
                           selectedAddressId === addr.id
-                            ? "border-cinnamon bg-cinnamon-50/50 shadow-xs"
+                            ? "border-primary bg-primary/5 shadow-xs"
                             : "border-cream-300 hover:bg-cream-100"
                         }`}
                       >
@@ -367,11 +395,11 @@ export default function CheckoutPage() {
                             name="addressSelect"
                             checked={selectedAddressId === addr.id}
                             onChange={() => setSelectedAddressId(addr.id)}
-                            className="h-4 w-4 text-cinnamon focus:ring-cinnamon"
+                            className="h-4 w-4 text-primary focus:ring-primary"
                           />
-                          <span className="font-bold text-xs text-charcoal">{addr.fullName}</span>
+                          <span className="font-bold text-xs text-spice-dark">{addr.fullName}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                        <p className="text-xs text-spice-muted mt-1.5 leading-relaxed">
                           {addr.street}, {addr.city}, {addr.state} - {addr.postalCode}
                         </p>
                       </label>
@@ -382,10 +410,10 @@ export default function CheckoutPage() {
                     type="button"
                     onClick={() => setSelectedAddressId("new")}
                     className={`text-xs font-bold ${
-                      selectedAddressId === "new" ? "text-cinnamon underline" : "text-muted-foreground hover:text-charcoal"
+                      selectedAddressId === "new" ? "text-primary underline" : "text-spice-muted hover:text-spice-dark"
                     }`}
                   >
-                    + Ship to a different address
+                    + {isHindi ? "नया पता जोड़ें" : "Ship to a different address"}
                   </button>
                 </div>
               )}
@@ -394,74 +422,86 @@ export default function CheckoutPage() {
               {(selectedAddressId === "new" || savedAddresses.length === 0) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold text-charcoal mb-1">Full Name *</label>
+                    <label className="block text-xs font-bold text-spice-dark mb-1">
+                      {dict.checkout.fullName} *
+                    </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Vikramaditya Sharma"
+                      placeholder="e.g. Ramesh Kumar"
                       value={addressForm.fullName}
                       onChange={(e) => setAddressForm({ ...addressForm, fullName: e.target.value })}
-                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-charcoal focus:border-cinnamon focus:outline-none"
+                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-spice-dark focus:border-primary focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-charcoal mb-1">Email *</label>
+                    <label className="block text-xs font-bold text-spice-dark mb-1">
+                      {isHindi ? "ईमेल आईडी *" : "Email Address *"}
+                    </label>
                     <input
                       type="email"
                       required
-                      placeholder="vikram@example.com"
+                      placeholder="ramesh@example.com"
                       value={addressForm.email}
                       onChange={(e) => setAddressForm({ ...addressForm, email: e.target.value })}
-                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-charcoal focus:border-cinnamon focus:outline-none"
+                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-spice-dark focus:border-primary focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-charcoal mb-1">Phone Number *</label>
+                    <label className="block text-xs font-bold text-spice-dark mb-1">
+                      {dict.checkout.phone} *
+                    </label>
                     <input
                       type="tel"
                       required
                       placeholder="10-digit mobile number"
                       value={addressForm.phone}
                       onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-charcoal focus:border-cinnamon focus:outline-none"
+                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-spice-dark focus:border-primary focus:outline-none"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold text-charcoal mb-1">Street Address *</label>
+                    <label className="block text-xs font-bold text-spice-dark mb-1">
+                      {dict.checkout.street} *
+                    </label>
                     <input
                       type="text"
                       required
                       placeholder="House/Flat No, Apartment, Street name"
                       value={addressForm.street}
                       onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
-                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-charcoal focus:border-cinnamon focus:outline-none"
+                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-spice-dark focus:border-primary focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-charcoal mb-1">City *</label>
+                    <label className="block text-xs font-bold text-spice-dark mb-1">
+                      {dict.checkout.city} *
+                    </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Bengaluru"
+                      placeholder="e.g. Bengaluru / Jaipur"
                       value={addressForm.city}
                       onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-charcoal focus:border-cinnamon focus:outline-none"
+                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-spice-dark focus:border-primary focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-charcoal mb-1">PIN Code *</label>
+                    <label className="block text-xs font-bold text-spice-dark mb-1">
+                      {dict.checkout.pincode} *
+                    </label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. 560038"
                       value={addressForm.postalCode}
                       onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
-                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-charcoal focus:border-cinnamon focus:outline-none"
+                      className="w-full rounded-xl border border-cream-300 px-3.5 py-2 text-xs sm:text-sm text-spice-dark focus:border-primary focus:outline-none"
                     />
                   </div>
                 </div>
@@ -471,9 +511,9 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(2)}
-                  className="flex items-center gap-2 rounded-xl bg-cinnamon px-6 py-3 text-xs font-bold text-white hover:bg-cinnamon-600 shadow-spice-sm"
+                  className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-xs font-bold text-white hover:bg-primary-dark shadow-sm"
                 >
-                  <span>Continue to Delivery Speed</span>
+                  <span>{isHindi ? "डिलीवरी विकल्प पर जाएं" : "Continue to Delivery Speed"}</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -482,11 +522,11 @@ export default function CheckoutPage() {
 
           {/* STEP 2: Delivery Option */}
           {currentStep === 2 && (
-            <div className="rounded-3xl border border-cream-300 bg-white p-6 sm:p-8 shadow-spice-sm space-y-5 animate-in fade-in duration-150">
+            <div className="rounded-3xl border border-cream-300 bg-white p-6 sm:p-8 shadow-sm space-y-5 animate-in fade-in duration-150">
               <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
-                <Truck className="h-5 w-5 text-cinnamon" />
-                <h2 className="font-serif text-lg font-bold text-charcoal">
-                  2. Select Delivery Option
+                <Truck className="h-5 w-5 text-primary" />
+                <h2 className="font-serif text-lg font-bold text-spice-dark">
+                  2. {isHindi ? "डिलीवरी का प्रकार चुनें" : "Select Delivery Option"}
                 </h2>
               </div>
 
@@ -494,7 +534,7 @@ export default function CheckoutPage() {
                 <label
                   className={`flex items-center justify-between rounded-2xl border p-4 cursor-pointer transition-all ${
                     deliveryOption === "standard"
-                      ? "border-cinnamon bg-cinnamon-50/50 shadow-xs"
+                      ? "border-primary bg-primary/5 shadow-xs"
                       : "border-cream-300 hover:bg-cream-100"
                   }`}
                 >
@@ -505,26 +545,28 @@ export default function CheckoutPage() {
                       value="standard"
                       checked={deliveryOption === "standard"}
                       onChange={() => setDeliveryOption("standard")}
-                      className="h-4 w-4 text-cinnamon focus:ring-cinnamon"
+                      className="h-4 w-4 text-primary focus:ring-primary"
                     />
                     <div>
-                      <p className="text-xs sm:text-sm font-bold text-charcoal">
-                        Standard Ground Express (3-5 Days)
+                      <p className="text-xs sm:text-sm font-bold text-spice-dark">
+                        {isHindi ? "मानक ग्राउंड एक्सप्रेस (3-5 दिन)" : "Standard Ground Express (3-5 Days)"}
                       </p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        Free on orders above ₹499 • Fully insured transit
+                      <p className="text-[11px] text-spice-muted mt-0.5">
+                        {isHindi
+                          ? "₹499 से अधिक के ऑर्डर पर मुफ्त • सुरक्षित पैकेजिंग"
+                          : "Free on orders above ₹499 • Fully insured transit"}
                       </p>
                     </div>
                   </div>
-                  <span className="font-bold text-xs text-charcoal">
-                    {baseShipping === 0 ? "FREE" : formatPrice(60)}
+                  <span className="font-bold text-xs text-spice-dark">
+                    {baseShipping === 0 ? (isHindi ? "मुफ्त" : "FREE") : formatPrice(60)}
                   </span>
                 </label>
 
                 <label
                   className={`flex items-center justify-between rounded-2xl border p-4 cursor-pointer transition-all ${
                     deliveryOption === "express"
-                      ? "border-cinnamon bg-cinnamon-50/50 shadow-xs"
+                      ? "border-primary bg-primary/5 shadow-xs"
                       : "border-cream-300 hover:bg-cream-100"
                   }`}
                 >
@@ -535,23 +577,25 @@ export default function CheckoutPage() {
                       value="express"
                       checked={deliveryOption === "express"}
                       onChange={() => setDeliveryOption("express")}
-                      className="h-4 w-4 text-cinnamon focus:ring-cinnamon"
+                      className="h-4 w-4 text-primary focus:ring-primary"
                     />
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-xs sm:text-sm font-bold text-charcoal">
-                          Priority Air Courier (24-48 Hours)
+                        <p className="text-xs sm:text-sm font-bold text-spice-dark">
+                          {isHindi ? "प्राथमिकता एयर कूरियर (24-48 घंटे)" : "Priority Air Courier (24-48 Hours)"}
                         </p>
-                        <span className="rounded-full bg-turmeric-100 text-turmeric-800 text-[10px] font-bold px-2 py-0.5">
-                          Fastest
+                        <span className="rounded-full bg-accent/20 text-spice-dark text-[10px] font-bold px-2 py-0.5">
+                          {isHindi ? "तीव्रतम" : "Fastest"}
                         </span>
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        Guaranteed priority packing directly at harvest warehouse
+                      <p className="text-[11px] text-spice-muted mt-0.5">
+                        {isHindi
+                          ? "फैक्ट्री वेयरहाउस से सीधे प्राथमिकता प्रेषण"
+                          : "Guaranteed priority packing directly at harvest warehouse"}
                       </p>
                     </div>
                   </div>
-                  <span className="font-bold text-xs text-cinnamon">
+                  <span className="font-bold text-xs text-primary">
                     +{formatPrice(120)}
                   </span>
                 </label>
@@ -561,16 +605,16 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(1)}
-                  className="text-xs font-semibold text-muted-foreground hover:text-charcoal"
+                  className="text-xs font-semibold text-spice-muted hover:text-spice-dark"
                 >
-                  Back to Address
+                  {isHindi ? "वापस पते पर जाएं" : "Back to Address"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setCurrentStep(3)}
-                  className="flex items-center gap-2 rounded-xl bg-cinnamon px-6 py-3 text-xs font-bold text-white hover:bg-cinnamon-600 shadow-spice-sm"
+                  className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-xs font-bold text-white hover:bg-primary-dark shadow-sm"
                 >
-                  <span>Continue to Payment</span>
+                  <span>{isHindi ? "भुगतान विधि पर जाएं" : "Continue to Payment"}</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -579,11 +623,11 @@ export default function CheckoutPage() {
 
           {/* STEP 3: Payment Method */}
           {currentStep === 3 && (
-            <div className="rounded-3xl border border-cream-300 bg-white p-6 sm:p-8 shadow-spice-sm space-y-5 animate-in fade-in duration-150">
+            <div className="rounded-3xl border border-cream-300 bg-white p-6 sm:p-8 shadow-sm space-y-5 animate-in fade-in duration-150">
               <div className="flex items-center gap-2 border-b border-cream-200 pb-3">
-                <Lock className="h-5 w-5 text-cardamom" />
-                <h2 className="font-serif text-lg font-bold text-charcoal">
-                  3. Select Payment Method
+                <Lock className="h-5 w-5 text-secondary" />
+                <h2 className="font-serif text-lg font-bold text-spice-dark">
+                  3. {dict.checkout.paymentMode}
                 </h2>
               </div>
 
@@ -591,7 +635,7 @@ export default function CheckoutPage() {
                 <label
                   className={`flex items-center justify-between rounded-2xl border p-4 cursor-pointer transition-all ${
                     paymentMethod === "RAZORPAY"
-                      ? "border-cinnamon bg-cinnamon-50/50 shadow-xs"
+                      ? "border-primary bg-primary/5 shadow-xs"
                       : "border-cream-300 hover:bg-cream-100"
                   }`}
                 >
@@ -602,29 +646,29 @@ export default function CheckoutPage() {
                       value="RAZORPAY"
                       checked={paymentMethod === "RAZORPAY"}
                       onChange={() => setPaymentMethod("RAZORPAY")}
-                      className="h-4 w-4 text-cinnamon focus:ring-cinnamon"
+                      className="h-4 w-4 text-primary focus:ring-primary"
                     />
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-xs sm:text-sm font-bold text-charcoal">
-                          Razorpay Gateway (UPI, GPay, Cards, Netbanking)
+                        <p className="text-xs sm:text-sm font-bold text-spice-dark">
+                          {dict.checkout.onlinePayment}
                         </p>
-                        <span className="rounded-full bg-cardamom-100 text-cardamom text-[10px] font-bold px-2 py-0.5">
-                          Instant
+                        <span className="rounded-full bg-secondary/10 text-secondary text-[10px] font-bold px-2 py-0.5">
+                          {isHindi ? "तत्काल" : "Instant"}
                         </span>
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        Encrypted 256-bit SSL transaction powered by Razorpay.
+                      <p className="text-[11px] text-spice-muted mt-0.5">
+                        {dict.checkout.secureNotice}
                       </p>
                     </div>
                   </div>
-                  <CreditCard className="h-5 w-5 text-cinnamon hidden sm:block" />
+                  <CreditCard className="h-5 w-5 text-primary hidden sm:block" />
                 </label>
 
                 <label
                   className={`flex items-center justify-between rounded-2xl border p-4 cursor-pointer transition-all ${
                     paymentMethod === "COD"
-                      ? "border-cinnamon bg-cinnamon-50/50 shadow-xs"
+                      ? "border-primary bg-primary/5 shadow-xs"
                       : "border-cream-300 hover:bg-cream-100"
                   }`}
                 >
@@ -635,18 +679,20 @@ export default function CheckoutPage() {
                       value="COD"
                       checked={paymentMethod === "COD"}
                       onChange={() => setPaymentMethod("COD")}
-                      className="h-4 w-4 text-cinnamon focus:ring-cinnamon"
+                      className="h-4 w-4 text-primary focus:ring-primary"
                     />
                     <div>
-                      <p className="text-xs sm:text-sm font-bold text-charcoal">
-                        Cash on Delivery (COD)
+                      <p className="text-xs sm:text-sm font-bold text-spice-dark">
+                        {dict.checkout.codPayment}
                       </p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        Pay cash or UPI upon delivery at your doorstep.
+                      <p className="text-[11px] text-spice-muted mt-0.5">
+                        {isHindi
+                          ? "घर पर डिलीवरी के समय नकद या UPI द्वारा भुगतान करें।"
+                          : "Pay cash or UPI upon delivery at your doorstep."}
                       </p>
                     </div>
                   </div>
-                  <Banknote className="h-5 w-5 text-cardamom hidden sm:block" />
+                  <Banknote className="h-5 w-5 text-secondary hidden sm:block" />
                 </label>
               </div>
 
@@ -654,9 +700,9 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(2)}
-                  className="text-xs font-semibold text-muted-foreground hover:text-charcoal"
+                  className="text-xs font-semibold text-spice-muted hover:text-spice-dark"
                 >
-                  Back to Delivery
+                  {isHindi ? "वापस डिलीवरी पर जाएं" : "Back to Delivery"}
                 </button>
               </div>
             </div>
@@ -665,9 +711,9 @@ export default function CheckoutPage() {
 
         {/* Right 5 Columns: Order Summary & Coupon Engine */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="rounded-3xl border border-cream-300 bg-white p-6 shadow-spice-sm space-y-5">
-            <h3 className="font-serif text-base font-bold text-charcoal border-b border-cream-200 pb-3">
-              Order Summary ({items.reduce((s, i) => s + i.quantity, 0)} items)
+          <div className="rounded-3xl border border-cream-300 bg-white p-6 shadow-sm space-y-5">
+            <h3 className="font-serif text-base font-bold text-spice-dark border-b border-cream-200 pb-3">
+              {dict.cart.orderSummary} ({items.reduce((s, i) => s + i.quantity, 0)} {isHindi ? "मसाले" : "items"})
             </h3>
 
             {/* Items list preview */}
@@ -678,12 +724,14 @@ export default function CheckoutPage() {
                     <Image src={item.image} alt={item.name} fill className="object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-charcoal truncate font-serif">{item.name}</p>
-                    <p className="text-muted-foreground text-[11px]">
+                    <p className="font-bold text-spice-dark truncate font-serif">
+                      {isHindi && item.nameHi ? item.nameHi : item.name}
+                    </p>
+                    <p className="text-spice-muted text-[11px]">
                       {item.weight} × {item.quantity}
                     </p>
                   </div>
-                  <span className="font-bold text-charcoal font-display">
+                  <span className="font-bold text-spice-dark font-display">
                     {formatPrice(item.price * item.quantity)}
                   </span>
                 </div>
@@ -692,22 +740,23 @@ export default function CheckoutPage() {
 
             {/* Coupon Engine Input */}
             <div className="border-t border-cream-200 pt-4 space-y-2">
-              <label className="block text-xs font-bold text-charcoal flex items-center gap-1.5">
-                <Tag className="h-3.5 w-3.5 text-cinnamon" />
-                <span>Apply Promo Code</span>
+              <label className="block text-xs font-bold text-spice-dark flex items-center gap-1.5">
+                <Tag className="h-3.5 w-3.5 text-primary" />
+                <span>{dict.cart.couponCode}</span>
               </label>
 
               {appliedCoupon ? (
-                <div className="flex items-center justify-between rounded-xl bg-cardamom-50 border border-cardamom-200 p-2.5 text-xs text-cardamom">
+                <div className="flex items-center justify-between rounded-xl bg-secondary/10 border border-secondary/20 p-2.5 text-xs text-secondary">
                   <div className="flex items-center gap-1.5">
                     <Check className="h-4 w-4" />
                     <span>
-                      <strong>{appliedCoupon.code}</strong> applied (-{formatPrice(appliedCoupon.discountAmount)})
+                      <strong>{appliedCoupon.code}</strong> {isHindi ? "लागू (-" : "applied (-"}
+                      {formatPrice(appliedCoupon.discountAmount)})
                     </span>
                   </div>
                   <button
                     onClick={handleRemoveCoupon}
-                    className="p-1 hover:bg-cardamom-100 rounded text-cardamom"
+                    className="p-1 hover:bg-secondary/20 rounded text-secondary"
                     aria-label="Remove coupon"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -720,14 +769,14 @@ export default function CheckoutPage() {
                     placeholder="e.g. WELCOME10, SPICEKING"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                    className="flex-1 rounded-xl border border-cream-300 px-3 py-2 text-xs uppercase text-charcoal focus:border-cinnamon focus:outline-none"
+                    className="flex-1 rounded-xl border border-cream-300 px-3 py-2 text-xs uppercase text-spice-dark focus:border-primary focus:outline-none"
                   />
                   <button
                     type="submit"
                     disabled={couponLoading || !couponInput.trim()}
-                    className="rounded-xl bg-cinnamon px-4 py-2 text-xs font-bold text-white hover:bg-cinnamon-600 disabled:opacity-50"
+                    className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white hover:bg-primary-dark disabled:opacity-50"
                   >
-                    {couponLoading ? "..." : "Apply"}
+                    {couponLoading ? "..." : dict.cart.apply}
                   </button>
                 </form>
               )}
@@ -741,30 +790,30 @@ export default function CheckoutPage() {
             </div>
 
             {/* Price Calculations */}
-            <div className="border-t border-cream-200 pt-3 space-y-2 text-xs text-muted-foreground">
+            <div className="border-t border-cream-200 pt-3 space-y-2 text-xs text-spice-muted">
               <div className="flex justify-between">
-                <span>Items Subtotal</span>
-                <span className="font-semibold text-charcoal">{formatPrice(subtotal)}</span>
+                <span>{dict.cart.subtotal}</span>
+                <span className="font-semibold text-spice-dark">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Shipping Fee</span>
-                <span className="font-semibold text-charcoal">
+                <span>{dict.cart.shipping}</span>
+                <span className="font-semibold text-spice-dark">
                   {shippingFee === 0 ? (
-                    <span className="text-cardamom font-bold">FREE</span>
+                    <span className="text-secondary font-bold">{dict.cart.freeShipping}</span>
                   ) : (
                     formatPrice(shippingFee)
                   )}
                 </span>
               </div>
               {appliedCoupon && (
-                <div className="flex justify-between text-cardamom font-semibold">
-                  <span>Coupon Savings ({appliedCoupon.code})</span>
+                <div className="flex justify-between text-secondary font-semibold">
+                  <span>{isHindi ? "कूपन छूट" : "Coupon Savings"} ({appliedCoupon.code})</span>
                   <span>-{formatPrice(appliedCoupon.discountAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-base font-bold text-charcoal pt-2 border-t border-cream-200">
-                <span>Final Amount</span>
-                <span className="text-cinnamon font-display text-xl">{formatPrice(finalAmount)}</span>
+              <div className="flex justify-between text-base font-bold text-spice-dark pt-2 border-t border-cream-200">
+                <span>{dict.cart.total}</span>
+                <span className="text-primary font-display text-xl">{formatPrice(finalAmount)}</span>
               </div>
             </div>
 
@@ -772,14 +821,22 @@ export default function CheckoutPage() {
             <button
               onClick={handlePlaceOrder}
               disabled={isProcessing}
-              className="w-full rounded-2xl bg-cinnamon py-4 text-sm font-bold text-white hover:bg-cinnamon-600 shadow-spice-md transition-all active:scale-[0.99] disabled:opacity-50"
+              className="w-full rounded-2xl bg-primary py-4 text-sm font-bold text-white hover:bg-primary-dark shadow-sm transition-all active:scale-[0.99] disabled:opacity-50"
             >
-              {isProcessing ? "Authorizing Secure Order..." : `Complete Order • ${formatPrice(finalAmount)}`}
+              {isProcessing
+                ? isHindi
+                  ? "ऑर्डर की पुष्टि की जा रही है..."
+                  : "Authorizing Secure Order..."
+                : `${dict.checkout.placeOrder} • ${formatPrice(finalAmount)}`}
             </button>
 
-            <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground pt-1">
-              <ShieldCheck className="h-4 w-4 text-cardamom" />
-              <span>SSL 256-Bit Encrypted • Farm Guaranteed</span>
+            <div className="flex items-center justify-center gap-2 text-[11px] text-spice-muted pt-1">
+              <ShieldCheck className="h-4 w-4 text-secondary" />
+              <span>
+                {isHindi
+                  ? "256-बिट SSL सुरक्षित चेकआउट • 100% शुद्धता गारंटी"
+                  : "SSL 256-Bit Encrypted • Farm Guaranteed"}
+              </span>
             </div>
           </div>
         </div>

@@ -3,8 +3,9 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, ShieldCheck, Truck } from "lucide-react";
+import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useTranslation } from "@/store/useLanguageStore";
 import { formatPrice } from "@/lib/utils";
 
 export function CartDrawer() {
@@ -20,12 +21,13 @@ export function CartDrawer() {
     getProgressToFreeShipping,
   } = useCartStore();
 
+  const { isHindi, dict } = useTranslation();
+
   const subtotal = getSubtotal();
   const shipping = getShippingFee();
   const grandTotal = getGrandTotal();
   const progress = getProgressToFreeShipping();
 
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDrawerOpen(false);
@@ -46,133 +48,132 @@ export function CartDrawer() {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-spice-dark/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-300"
+        className="absolute inset-0 bg-[#2B140E]/40 backdrop-blur-xs transition-opacity"
         onClick={() => setDrawerOpen(false)}
       />
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
-        <div className="relative w-screen max-w-md bg-[#FAF7F2] shadow-2xl flex flex-col">
+        <div className="relative w-screen max-w-md bg-white shadow-2xl border-l border-[#E8E1DD] flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-cream-300 px-5 py-4 bg-white">
+          <div className="flex items-center justify-between border-b border-[#E8E1DD] px-5 py-4 bg-white">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold text-spice-dark font-serif">Your Spice Basket</h2>
-              <span className="rounded-full bg-primary-100 text-primary-800 text-xs font-semibold px-2 py-0.5">
-                {items.reduce((s, i) => s + i.quantity, 0)}
-              </span>
+              <ShoppingBag className="h-4 w-4 text-[#3D1E16]" />
+              <h2 className="text-base font-semibold text-[#2B140E]">
+                {dict.cart.title} ({items.reduce((s, i) => s + i.quantity, 0)})
+              </h2>
             </div>
             <button
+              type="button"
               onClick={() => setDrawerOpen(false)}
-              className="rounded-lg p-1.5 text-spice-muted hover:bg-cream-200 hover:text-spice-dark transition-colors"
+              className="rounded-lg p-1.5 text-[#6E5A54] hover:bg-[#FAF8F6] hover:text-[#2B140E]"
               aria-label="Close cart"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Free Shipping Progress Meter */}
-          <div className="bg-cream-200/90 border-b border-cream-300 px-5 py-3">
-            <div className="flex items-center justify-between text-xs font-medium text-spice-dark mb-1.5">
-              <span className="flex items-center gap-1.5 text-secondary-700">
-                <Truck className="h-3.5 w-3.5" />
+          {/* Minimal Free Shipping Bar */}
+          <div className="bg-[#FAF8F6] border-b border-[#E8E1DD] px-5 py-3">
+            <div className="flex items-center justify-between text-xs text-[#2B140E] mb-1.5">
+              <span>
                 {progress.remaining > 0 ? (
-                  <>Add <strong className="text-primary-700">{formatPrice(progress.remaining)}</strong> more for <strong>FREE Delivery</strong></>
+                  isHindi ? (
+                    <>मुफ्त डिलीवरी के लिए <strong>{formatPrice(progress.remaining)}</strong> और जोड़ें</>
+                  ) : (
+                    <>Add <strong>{formatPrice(progress.remaining)}</strong> for free delivery</>
+                  )
                 ) : (
-                  <span className="text-secondary-600 font-bold">🎉 Congratulations! You unlocked FREE Delivery</span>
+                  <span className="font-medium text-[#3D1E16]">
+                    {isHindi ? "मुफ्त डिलीवरी लागू" : "Free Delivery Unlocked"}
+                  </span>
                 )}
               </span>
-              <span className="text-xs font-semibold">{progress.percentage}%</span>
+              <span className="text-[11px] text-[#6E5A54]">{progress.percentage}%</span>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-cream-400">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E8E1DD]">
               <div
-                className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500 rounded-full"
+                className="h-full bg-[#3D1E16] transition-all duration-300 rounded-full"
                 style={{ width: `${progress.percentage}%` }}
               />
             </div>
           </div>
 
-          {/* Cart Items List */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {/* Cart Items */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-3">
             {items.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center text-center p-6 space-y-4">
-                <div className="h-16 w-16 rounded-full bg-cream-200 flex items-center justify-center text-spice-muted">
-                  <ShoppingBag className="h-8 w-8 text-primary-400" />
-                </div>
+              <div className="flex h-full flex-col items-center justify-center text-center p-6 space-y-3">
+                <ShoppingBag className="h-8 w-8 text-[#A9938A]" />
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-spice-dark">Your basket is empty</h3>
-                  <p className="text-xs text-spice-muted mt-1 max-w-[240px]">
-                    Experience single-origin, fresh-harvested spices direct from Indian plantations.
+                  <h3 className="font-serif text-base font-semibold text-[#2B140E]">
+                    {dict.cart.emptyTitle}
+                  </h3>
+                  <p className="text-xs text-[#6E5A54] mt-1 max-w-[240px]">
+                    {dict.cart.emptyDesc}
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setDrawerOpen(false)}
-                  className="rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-white hover:bg-primary-600 shadow-spice-sm"
+                  className="rounded-lg bg-[#3D1E16] px-4 py-2 text-xs font-medium text-white hover:bg-[#2B140E]"
                 >
-                  Explore Spice Collections
+                  {dict.cart.startShopping}
                 </button>
               </div>
             ) : (
               items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex gap-3 rounded-xl border border-cream-300/90 bg-white p-3 shadow-xs"
+                  className="flex gap-3 rounded-xl border border-[#E8E1DD] bg-white p-3"
                 >
-                  {/* Thumbnail */}
-                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-cream-100">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                    />
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-[#FAF8F6]">
+                    <Image src={item.image} alt={item.name} fill className="object-cover" />
                   </div>
 
-                  {/* Details */}
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
-                      <div className="flex items-start justify-between gap-1">
-                        <h4 className="text-xs sm:text-sm font-bold text-spice-dark line-clamp-1 font-serif">
-                          {item.name}
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="text-xs sm:text-sm font-medium text-[#2B140E] line-clamp-1">
+                          {isHindi && item.nameHi ? item.nameHi : item.name}
                         </h4>
                         <button
+                          type="button"
                           onClick={() => removeItem(item.id)}
-                          className="text-spice-muted hover:text-cinnamon-500 p-0.5"
+                          className="text-[#6E5A54] hover:text-[#2B140E] p-0.5"
                           aria-label="Remove item"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
-                      <p className="text-[11px] text-secondary-600 font-medium">
-                        {item.weight} • {item.origin}
+                      <p className="text-[11px] text-[#6E5A54]">
+                        {item.weight} · {isHindi && item.originHi ? item.originHi : item.origin}
                       </p>
                     </div>
 
                     <div className="flex items-center justify-between mt-2">
-                      {/* Quantity Modifier */}
-                      <div className="flex items-center rounded-lg border border-cream-300 bg-cream-100 p-0.5">
+                      <div className="flex items-center rounded-md border border-[#E8E1DD] bg-[#FAF8F6]">
                         <button
+                          type="button"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-1 hover:bg-white rounded text-spice-dark transition-colors"
+                          className="p-1 text-[#2B140E] hover:bg-white rounded-l"
                           aria-label="Decrease quantity"
                         >
                           <Minus className="h-3 w-3" />
                         </button>
-                        <span className="w-6 text-center text-xs font-bold text-spice-dark">
+                        <span className="w-6 text-center text-xs font-medium text-[#2B140E]">
                           {item.quantity}
                         </span>
                         <button
+                          type="button"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-1 hover:bg-white rounded text-spice-dark transition-colors"
+                          className="p-1 text-[#2B140E] hover:bg-white rounded-r"
                           aria-label="Increase quantity"
                         >
                           <Plus className="h-3 w-3" />
                         </button>
                       </div>
 
-                      {/* Price */}
-                      <span className="text-sm font-bold text-spice-dark font-display">
+                      <span className="text-sm font-semibold text-[#2B140E]">
                         {formatPrice(item.price * item.quantity)}
                       </span>
                     </div>
@@ -182,45 +183,34 @@ export function CartDrawer() {
             )}
           </div>
 
-          {/* Footer & Checkout */}
+          {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t border-cream-300 bg-white p-5 space-y-3">
-              <div className="space-y-1.5 text-xs text-spice-muted">
+            <div className="border-t border-[#E8E1DD] bg-[#FAF8F6] p-5 space-y-3">
+              <div className="space-y-1.5 text-xs text-[#6E5A54]">
                 <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span className="font-semibold text-spice-dark">{formatPrice(subtotal)}</span>
+                  <span>{dict.cart.subtotal}</span>
+                  <span className="font-medium text-[#2B140E]">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className="font-semibold text-spice-dark">
-                    {shipping === 0 ? (
-                      <span className="text-secondary-600 font-bold">FREE</span>
-                    ) : (
-                      formatPrice(shipping)
-                    )}
+                  <span>{dict.cart.shipping}</span>
+                  <span className="font-medium text-[#2B140E]">
+                    {shipping === 0 ? dict.cart.freeShipping : formatPrice(shipping)}
                   </span>
                 </div>
-                <div className="flex justify-between text-base font-bold text-spice-dark pt-2 border-t border-cream-200">
-                  <span>Estimated Total</span>
-                  <span className="text-primary font-display">{formatPrice(grandTotal)}</span>
+                <div className="flex justify-between text-sm font-bold text-[#2B140E] pt-2 border-t border-[#E8E1DD]">
+                  <span>{dict.cart.total}</span>
+                  <span>{formatPrice(grandTotal)}</span>
                 </div>
               </div>
 
-              <div className="pt-2">
-                <Link
-                  href="/checkout"
-                  onClick={() => setDrawerOpen(false)}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-white shadow-spice-md hover:bg-primary-600 hover:shadow-spice-lg transition-all active:scale-[0.99]"
-                >
-                  <span>Proceed to Checkout</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              <div className="flex items-center justify-center gap-2 text-[11px] text-spice-muted pt-1">
-                <ShieldCheck className="h-3.5 w-3.5 text-secondary" />
-                <span>100% Secure Checkout • Authentic Farm Sourced</span>
-              </div>
+              <Link
+                href="/checkout"
+                onClick={() => setDrawerOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3D1E16] hover:bg-[#2B140E] py-3 text-sm font-medium text-white transition-colors"
+              >
+                <span>{dict.cart.checkout}</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           )}
         </div>

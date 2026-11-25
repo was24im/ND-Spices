@@ -22,8 +22,10 @@ export interface ProductImageType {
 export interface CategoryType {
   id: string;
   name: string;
+  nameHi?: string;
   slug: string;
   description?: string;
+  descriptionHi?: string;
   image?: string;
   featured?: boolean;
 }
@@ -31,11 +33,14 @@ export interface CategoryType {
 export interface ProductType {
   id: string;
   name: string;
+  nameHi?: string;
   slug: string;
   scientificName?: string;
   description: string;
+  descriptionHi?: string;
   shortDesc?: string;
   origin: string; // e.g. "Idukki, Kerala", "Wayanad", "Kashmir"
+  originHi?: string;
   spiceLevel: SpiceLevelType;
   organic: boolean;
   featured: boolean;
@@ -55,6 +60,7 @@ export interface CartItemType {
   productId: string;
   variantId: string;
   name: string;
+  nameHi?: string;
   slug: string;
   weight: string;
   weightGrams: number;
@@ -63,6 +69,7 @@ export interface CartItemType {
   quantity: number;
   image: string;
   origin: string;
+  originHi?: string;
 }
 
 export interface ShippingAddressType {

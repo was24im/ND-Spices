@@ -3,97 +3,77 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Home, Search, Grid, Heart, ShoppingBag, User } from "lucide-react";
+import { Home, Search, Grid, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
-import { useWishlistStore } from "@/store/useWishlistStore";
+import { useTranslation } from "@/store/useLanguageStore";
 import { LiveSearchModal } from "../search/LiveSearchModal";
 
 export function MobileBottomNav() {
   const pathname = usePathname();
-  const { data: session } = useSession();
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const { isHindi, t } = useTranslation();
 
   const { toggleDrawer, getTotalItems: getCartCount } = useCartStore();
-  const { getTotalItems: getWishlistCount } = useWishlistStore();
-
   const cartCount = getCartCount();
-  const wishlistCount = getWishlistCount();
 
   const isActive = (path: string) => pathname === path;
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-cream-300 bg-[#FDFBF7]/95 backdrop-blur-md px-2 py-2 shadow-2xl safe-area-pb">
-        <div className="grid grid-cols-5 items-center text-center">
-          {/* 1. Home */}
+      <nav
+        aria-label="Mobile quick actions"
+        className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-[#E8E1DD] bg-white/95 backdrop-blur-sm px-2 py-1.5"
+      >
+        <div className="grid grid-cols-4 items-center text-center">
           <Link
             href="/"
+            aria-current={isActive("/") ? "page" : undefined}
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
-              isActive("/") ? "text-cinnamon font-bold" : "text-muted-foreground hover:text-charcoal"
+              isActive("/") ? "text-[#2B140E] font-semibold" : "text-[#6E5A54]"
             }`}
           >
-            <Home className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-medium">Home</span>
+            <Home className="h-4 w-4" />
+            <span className="text-[10px] mt-0.5">{t("nav.home")}</span>
           </Link>
 
-          {/* 2. Instant Search */}
-          <button
-            onClick={() => setSearchModalOpen(true)}
-            className="flex flex-col items-center justify-center py-1 text-muted-foreground hover:text-charcoal transition-colors"
-          >
-            <Search className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-medium">Search</span>
-          </button>
-
-          {/* 3. Catalog / Categories */}
           <Link
             href="/products"
+            aria-current={pathname.startsWith("/products") ? "page" : undefined}
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
-              pathname.startsWith("/products") ? "text-cinnamon font-bold" : "text-muted-foreground hover:text-charcoal"
+              pathname.startsWith("/products") ? "text-[#2B140E] font-semibold" : "text-[#6E5A54]"
             }`}
           >
-            <Grid className="h-5 w-5" />
-            <span className="text-[10px] mt-0.5 font-medium">Spices</span>
+            <Grid className="h-4 w-4" />
+            <span className="text-[10px] mt-0.5">{isHindi ? "मसाले" : "Spices"}</span>
           </Link>
 
-          {/* 4. Wishlist */}
-          <Link
-            href="/wishlist"
-            className={`relative flex flex-col items-center justify-center py-1 transition-colors ${
-              isActive("/wishlist") ? "text-cinnamon font-bold" : "text-muted-foreground hover:text-charcoal"
-            }`}
-          >
-            <div className="relative">
-              <Heart className="h-5 w-5" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-cinnamon text-[9px] font-bold text-white shadow-xs">
-                  {wishlistCount}
-                </span>
-              )}
-            </div>
-            <span className="text-[10px] mt-0.5 font-medium">Wishlist</span>
-          </Link>
-
-          {/* 5. Cart / Profile */}
           <button
+            type="button"
+            onClick={() => setSearchModalOpen(true)}
+            className="flex flex-col items-center justify-center py-1 text-[#6E5A54] hover:text-[#2B140E] transition-colors"
+          >
+            <Search className="h-4 w-4" />
+            <span className="text-[10px] mt-0.5">{t("nav.search")}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={toggleDrawer}
-            className="relative flex flex-col items-center justify-center py-1 text-cinnamon font-bold transition-colors"
+            className="relative flex flex-col items-center justify-center py-1 text-[#2B140E] font-medium transition-colors"
           >
             <div className="relative">
-              <ShoppingBag className="h-5 w-5" />
+              <ShoppingBag className="h-4 w-4" />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white shadow-xs">
+                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#3D1E16] text-[9px] font-semibold text-white">
                   {cartCount}
                 </span>
               )}
             </div>
-            <span className="text-[10px] mt-0.5 font-medium">Basket</span>
+            <span className="text-[10px] mt-0.5">{t("nav.basket")}</span>
           </button>
         </div>
       </nav>
 
-      {/* Live Search Modal instance */}
       <LiveSearchModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
     </>
   );

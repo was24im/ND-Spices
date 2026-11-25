@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import { Plus_Jakarta_Sans, Playfair_Display, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -18,6 +18,13 @@ const jakarta = Plus_Jakarta_Sans({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
+  display: "swap",
+});
+
+const devanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  variable: "--font-devanagari",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -50,8 +57,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${playfair.variable}`}>
-      <body className="min-h-screen flex flex-col antialiased bg-[#FDFBF7] text-charcoal selection:bg-cinnamon-200 selection:text-cinnamon-900 pb-16 lg:pb-0">
+    <html lang="en" className={`${jakarta.variable} ${playfair.variable} ${devanagari.variable}`}>
+      <body className="min-h-screen flex flex-col antialiased bg-white text-[#2B140E] selection:bg-[#3D1E16] selection:text-white pb-16 lg:pb-0">
         <AuthProvider>
           <DynamicThemeProvider>
             <Navbar />

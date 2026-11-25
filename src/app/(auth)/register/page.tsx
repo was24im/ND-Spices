@@ -65,8 +65,8 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-br from-primary via-cinnamon to-secondary items-center justify-center shadow-spice-sm mb-2">
-            <span className="text-white font-serif font-black text-xl">ND</span>
+          <div className="inline-flex h-11 w-11 rounded-xl bg-[#3D1E16] items-center justify-center mb-2">
+            <span className="text-white font-serif font-bold text-lg">ND</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-spice-dark">
             Join the Spice Guild

@@ -35,7 +35,16 @@ function LoginForm() {
         setErrorMessage(res.error);
         setLoading(false);
       } else {
-        router.push(callbackUrl);
+        const sessionRes = await fetch("/api/auth/session");
+        const sessionData = await sessionRes.json();
+        const role = sessionData?.user?.role;
+        if (!searchParams.get("callbackUrl") && (role === "SUPER_ADMIN" || role === "ADMIN")) {
+          router.push("/admin");
+        } else if (!searchParams.get("callbackUrl") && role === "STAFF") {
+          router.push("/staff/crm");
+        } else {
+          router.push(callbackUrl);
+        }
         router.refresh();
       }
     } catch (err) {
@@ -49,8 +58,8 @@ function LoginForm() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-br from-primary via-cinnamon to-secondary items-center justify-center shadow-spice-sm mb-2">
-            <span className="text-white font-serif font-black text-xl">ND</span>
+          <div className="inline-flex h-11 w-11 rounded-xl bg-[#3D1E16] items-center justify-center mb-2">
+            <span className="text-white font-serif font-bold text-lg">ND</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-spice-dark">
             Welcome Back

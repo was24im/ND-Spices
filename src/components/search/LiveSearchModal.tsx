@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, X, MapPin, Sparkles, ArrowRight, Flame } from "lucide-react";
+import { Search, X, ArrowRight } from "lucide-react";
 import { MOCK_PRODUCTS } from "@/lib/mockData";
 import { formatPrice } from "@/lib/utils";
+import { useTranslation } from "@/store/useLanguageStore";
 
 interface LiveSearchModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface LiveSearchModalProps {
 
 export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
   const router = useRouter();
+  const { isHindi, t } = useTranslation();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +33,6 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
     };
   }, [isOpen]);
 
-  // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -47,6 +48,7 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
         const q = query.toLowerCase();
         return (
           p.name.toLowerCase().includes(q) ||
+          ((p as any).nameHi && (p as any).nameHi.toLowerCase().includes(q)) ||
           p.origin.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q)
         );
@@ -54,31 +56,28 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
     : [];
 
   const popularSearches = [
-    "Red Chilli Powder",
-    "Alleppey Cardamom",
-    "Coriander Powder",
-    "Tellicherry Pepper",
-    "Lakadong Turmeric",
-    "Royal Garam Masala",
+    "Kashmiri Dabi",
+    "Teja Red Chilli Powder",
+    "Coriander Seeds",
+    "Turmeric Finger",
+    "Kasuri Methi",
+    "Jeera",
   ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4">
-      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-charcoal/70 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-[#2B140E]/40 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
-      {/* Search Modal Card */}
-      <div className="relative w-full max-w-2xl rounded-3xl border border-cream-300 bg-[#FDFBF7] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150">
-        {/* Search Header Bar */}
-        <div className="flex items-center border-b border-cream-300 px-4 sm:px-6 py-4 bg-white">
-          <Search className="h-5 w-5 text-cinnamon flex-shrink-0 mr-3" />
+      <div className="relative w-full max-w-xl rounded-xl border border-[#E8E1DD] bg-white shadow-spice-lg overflow-hidden">
+        <div className="flex items-center border-b border-[#E8E1DD] px-4 py-3.5 bg-white">
+          <Search className="h-4 w-4 text-[#6E5A54] flex-shrink-0 mr-3" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search single-origin spices, origins (e.g. Nagaur, Idukki, Cardamom)..."
+            placeholder={t("nav.searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -87,38 +86,40 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
                 router.push(`/products?search=${encodeURIComponent(query.trim())}`);
               }
             }}
-            className="flex-1 bg-transparent text-sm sm:text-base text-charcoal placeholder:text-muted-foreground focus:outline-none"
+            className="flex-1 bg-transparent text-sm text-[#2B140E] placeholder:text-[#6E5A54]/70 focus:outline-none"
           />
           {query && (
             <button
+              type="button"
               onClick={() => setQuery("")}
-              className="p-1 text-muted-foreground hover:text-charcoal mr-2"
+              className="p-1 text-[#6E5A54] hover:text-[#2B140E] mr-2"
+              aria-label="Clear search"
             >
               <X className="h-4 w-4" />
             </button>
           )}
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-lg bg-cream-200 px-2.5 py-1 text-xs font-semibold text-charcoal hover:bg-cream-300"
+            className="rounded border border-[#E8E1DD] bg-[#FAF8F6] px-2 py-0.5 text-[11px] font-medium text-[#2B140E]"
           >
             ESC
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="max-h-[60vh] overflow-y-auto p-5 sm:p-6 space-y-5">
+        <div className="max-h-[60vh] overflow-y-auto p-4 sm:p-5 space-y-4">
           {query.trim() === "" ? (
-            <div className="space-y-4">
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                <Sparkles className="h-3.5 w-3.5 text-turmeric" />
-                <span>Popular Harvest Searches</span>
-              </div>
+            <div className="space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#6E5A54]">
+                {isHindi ? "प्रमुख खोज" : "Popular Searches"}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {popularSearches.map((term) => (
                   <button
                     key={term}
+                    type="button"
                     onClick={() => setQuery(term)}
-                    className="rounded-xl border border-cream-300 bg-white px-3.5 py-2 text-xs font-semibold text-charcoal hover:border-cinnamon hover:text-cinnamon transition-colors shadow-xs"
+                    className="rounded-lg border border-[#E8E1DD] bg-[#FAF8F6] px-3 py-1.5 text-xs text-[#2B140E] hover:border-[#3D1E16] transition-colors"
                   >
                     {term}
                   </button>
@@ -126,64 +127,55 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
               </div>
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-10 space-y-2">
-              <p className="font-serif text-base font-bold text-charcoal">No spices matching "{query}"</p>
-              <p className="text-xs text-muted-foreground">
-                Try searching for "Cardamom", "Red Chilli", "Turmeric", or "Pepper".
+            <div className="text-center py-8 space-y-1">
+              <p className="font-serif text-sm font-semibold text-[#2B140E]">
+                {isHindi ? `"${query}" के लिए कोई मसाला नहीं मिला` : `No spices matching "${query}"`}
+              </p>
+              <p className="text-xs text-[#6E5A54]">
+                {isHindi ? "लाल मिर्च, हल्दी, धनिया, जीरा खोजें।" : "Try searching for Red Chilli, Coriander, Turmeric, or Jeera."}
               </p>
             </div>
           ) : (
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                <span>Found {filteredProducts.length} single-origin products</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs text-[#6E5A54]">
+                <span>{filteredProducts.length} {isHindi ? "परिणाम" : "results"}</span>
                 <Link
                   href={`/products?search=${encodeURIComponent(query)}`}
                   onClick={onClose}
-                  className="font-bold text-cinnamon hover:underline flex items-center gap-1"
+                  className="font-medium text-[#3D1E16] hover:underline flex items-center gap-1"
                 >
-                  <span>View full results</span>
+                  <span>{isHindi ? "सभी देखें" : "View all"}</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
 
-              <div className="divide-y divide-cream-200 rounded-2xl border border-cream-300 bg-white overflow-hidden shadow-xs">
+              <div className="divide-y divide-[#E8E1DD] rounded-lg border border-[#E8E1DD] bg-white overflow-hidden">
                 {filteredProducts.map((product) => (
                   <Link
                     key={product.id}
                     href={`/products/${product.slug}`}
                     onClick={onClose}
-                    className="flex items-center justify-between p-3 hover:bg-cream-100/70 transition-colors group"
+                    className="flex items-center gap-3 p-3 hover:bg-[#FAF8F6] transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-cream-100 flex-shrink-0">
-                        <Image
-                          src={product.images[0]?.url || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d"}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-serif text-xs sm:text-sm font-bold text-charcoal group-hover:text-cinnamon transition-colors">
-                          {product.name}
-                        </h4>
-                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
-                          <span className="flex items-center gap-0.5">
-                            <MapPin className="h-3 w-3 text-cinnamon" />
-                            {product.origin}
-                          </span>
-                          <span>•</span>
-                          <span className="text-cardamom font-medium">{product.variants[0]?.weight}</span>
-                        </div>
-                      </div>
+                    <div className="relative h-12 w-12 rounded-md overflow-hidden bg-[#FAF8F6] flex-shrink-0">
+                      <Image
+                        src={product.images[0]?.url || "/images/categories/whole-red-chilli.jpg"}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
-
-                    <div className="text-right">
-                      <p className="font-display font-extrabold text-sm text-charcoal">
-                        {formatPrice(product.variants[0]?.price || 0)}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-[#2B140E] truncate">
+                        {isHindi && (product as any).nameHi ? (product as any).nameHi : product.name}
                       </p>
-                      <span className="text-[10px] text-secondary font-bold">In Stock</span>
+                      <p className="text-[11px] text-[#6E5A54] truncate">
+                        {isHindi && (product as any).originHi ? (product as any).originHi : product.origin}
+                      </p>
                     </div>
+                    <span className="text-xs font-semibold text-[#2B140E]">
+                      {formatPrice(product.variants[0]?.price || 45)}
+                    </span>
                   </Link>
                 ))}
               </div>
